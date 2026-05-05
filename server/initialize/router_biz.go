@@ -2,6 +2,7 @@ package initialize
 
 import (
 	"github.com/flipped-aurora/gin-vue-admin/server/router"
+	contentRouter "github.com/flipped-aurora/gin-vue-admin/server/router/content"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,4 +17,8 @@ func initBizRouter(routers ...*gin.RouterGroup) {
 	publicGroup := routers[1]
 
 	holder(publicGroup, privateGroup)
+
+	// 内容发布（文章 + SEO）
+	new(contentRouter.RouterGroup).InitContentArticleRouter(privateGroup, publicGroup)
+
 }

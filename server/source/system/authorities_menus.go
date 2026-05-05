@@ -66,7 +66,18 @@ func (i *initMenuAuthority) InitializeData(ctx context.Context) (next context.Co
 
 	// 添加仪表盘、关于我们和个人信息菜单
 	for _, menu := range allMenus {
-		if menu.ParentId == 0 && (menu.Name == "dashboard" || menu.Name == "about" || menu.Name == "person" || menu.Name == "state") {
+		if menu.ParentId == 0 && (menu.Name == "dashboard" || menu.Name == "content" || menu.Name == "about" || menu.Name == "person" || menu.Name == "state") {
+			menu8881 = append(menu8881, menu)
+		}
+	}
+
+	// 为普通用户添加“内容获客”子菜单
+	for _, menu := range allMenus {
+		parentName := ""
+		if menu.ParentId > 0 && menuMap[menu.ParentId].Name != "" {
+			parentName = menuMap[menu.ParentId].Name
+		}
+		if menu.ParentId > 0 && parentName == "content" {
 			menu8881 = append(menu8881, menu)
 		}
 	}

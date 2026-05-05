@@ -8,6 +8,7 @@ type RouterGroup struct {
 	SysRouter
 	BaseRouter
 	InitRouter
+	ContentInitRouter
 	MenuRouter
 	UserRouter
 	CasbinRouter
@@ -50,4 +51,5 @@ var (
 	sysErrorApi          = api.ApiGroupApp.SystemApiGroup.SysErrorApi
 	skillsApi            = api.ApiGroupApp.SystemApiGroup.SkillsApi
 	aiWorkflowSessionApi = api.ApiGroupApp.SystemApiGroup.AIWorkflowSessionApi
+	contentInitApi       = api.ApiGroupApp.SystemApiGroup.ContentInitApi
 )

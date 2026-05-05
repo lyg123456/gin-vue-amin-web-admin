@@ -147,6 +147,14 @@ func (i *initApi) InitializeData(ctx context.Context) (context.Context, error) {
 		{ApiGroup: "客户", Method: "GET", Path: "/customer/customer", Description: "获取单一客户"},
 		{ApiGroup: "客户", Method: "GET", Path: "/customer/customerList", Description: "获取客户列表"},
 
+		{ApiGroup: "内容获客", Method: "POST", Path: "/contentArticle/createArticle", Description: "创建文章"},
+		{ApiGroup: "内容获客", Method: "PUT", Path: "/contentArticle/updateArticle", Description: "更新文章"},
+		{ApiGroup: "内容获客", Method: "DELETE", Path: "/contentArticle/deleteArticle", Description: "删除文章"},
+		{ApiGroup: "内容获客", Method: "GET", Path: "/contentArticle/findArticle", Description: "获取单篇文章"},
+		{ApiGroup: "内容获客", Method: "GET", Path: "/contentArticle/getArticleList", Description: "获取文章列表"},
+		{ApiGroup: "内容获客", Method: "POST", Path: "/contentArticle/publishArticle", Description: "发布文章"},
+		{ApiGroup: "系统初始化", Method: "POST", Path: "/contentInit/sync", Description: "同步内容获客初始化数据"},
+
 		{ApiGroup: "代码生成器", Method: "GET", Path: "/autoCode/getDB", Description: "获取所有数据库"},
 		{ApiGroup: "代码生成器", Method: "GET", Path: "/autoCode/getTables", Description: "获取数据库表"},
 		{ApiGroup: "代码生成器", Method: "POST", Path: "/autoCode/createTemp", Description: "自动化代码"},
