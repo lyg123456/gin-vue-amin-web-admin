@@ -988,6 +988,7 @@
     <div class="mt-4">
       <el-button type="primary" @click="update">立即更新 </el-button>
       <el-button type="primary" @click="reload">重载服务 </el-button>
+      <el-button type="warning" @click="syncContent">同步内容获客菜单/权限</el-button>
     </div>
   </div>
 </template>
@@ -998,6 +999,7 @@
   import { ElMessage, ElMessageBox } from 'element-plus'
   import { Minus, Plus } from '@element-plus/icons-vue'
   import { emailTest } from '@/api/email'
+  import { syncContentInit } from '@/api/contentInit'
   import { CreateUUID } from '@/utils/format'
 
   defineOptions({
@@ -1122,6 +1124,25 @@
 
   const removeNode = (index) => {
     config.value.mongo.hosts.splice(index, 1)
+  }
+
+  const syncContent = () => {
+    ElMessageBox.confirm(
+      '这会把“内容获客/文章管理”的菜单、API、权限增量同步到当前数据库。确定执行吗？',
+      '同步确认',
+      {
+        confirmButtonText: '确定同步',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }
+    )
+      .then(async () => {
+        const res = await syncContentInit()
+        if (res.code === 0) {
+          ElMessage.success('同步成功，请重新登录查看菜单')
+        }
+      })
+      .catch(() => {})
   }
 </script>
 
