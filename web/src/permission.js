@@ -13,7 +13,7 @@ Nprogress.configure({
 })
 
 // 白名单路由
-const WHITE_LIST = ['Login', 'Init']
+const WHITE_LIST = ['Login', 'Init', 'MemberEntryLogin']
 
 function isExternalUrl(val) {
   return typeof val === 'string' && /^(https?:)?\/\//.test(val)
@@ -165,7 +165,7 @@ router.beforeEach(async (to, from) => {
   await routerStore.handleKeepAlive(to)
   // 设置页面标题
   document.title = getPageTitle(to.meta.title, to)
-  if (to.meta.client) {
+  if (to.meta.client || to.matched.some((r) => r.meta?.client)) {
     return true
   }
 

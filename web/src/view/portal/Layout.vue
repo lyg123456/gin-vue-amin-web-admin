@@ -1,0 +1,126 @@
+<template>
+  <div class="portal-root">
+    <header class="portal-header">
+      <div class="portal-inner header-flex">
+        <router-link to="/" class="brand">内容站</router-link>
+        <nav class="nav">
+          <router-link to="/">首页</router-link>
+          <router-link to="/member">会员中心</router-link>
+          <router-link v-if="!token" class="muted" :to="{ name: 'MemberEntryLogin', query: { redirect: '/member' } }">
+            会员登录
+          </router-link>
+        </nav>
+      </div>
+    </header>
+    <main class="portal-main">
+      <div class="portal-inner">
+        <router-view />
+      </div>
+    </main>
+    <footer class="portal-footer">
+      <div class="portal-inner footer-text">
+        <span>本站文章由管理后台发布 · 仅供演示</span>
+        <span class="sep">|</span>
+        <a class="admin-link" :href="adminLoginHref">管理员入口</a>
+      </div>
+    </footer>
+  </div>
+</template>
+
+<script setup>
+  import { computed } from 'vue'
+  import { storeToRefs } from 'pinia'
+  import { useUserStore } from '@/pinia/modules/user'
+
+  const userStore = useUserStore()
+  const { token } = storeToRefs(userStore)
+
+  const adminLoginHref = computed(() => {
+    const o = typeof window !== 'undefined' ? window.location.origin : ''
+    return `${o}/admin/#/login`
+  })
+</script>
+
+<style scoped>
+  .portal-root {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #f6f7f9;
+    color: #1a1a1a;
+  }
+  .portal-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 20px;
+    width: 100%;
+  }
+  .portal-header {
+    background: #fff;
+    border-bottom: 1px solid #e8eaed;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .header-flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+  }
+  .brand {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #2563eb;
+    text-decoration: none;
+  }
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+  }
+  .nav a {
+    color: #374151;
+    text-decoration: none;
+    font-size: 0.95rem;
+  }
+  .nav a.router-link-active:not(.muted) {
+    color: #2563eb;
+    font-weight: 600;
+  }
+  .nav a:hover {
+    color: #1d4ed8;
+  }
+  .muted {
+    opacity: 0.85;
+  }
+  .portal-main {
+    flex: 1;
+    padding: 28px 0 40px;
+  }
+  .portal-footer {
+    border-top: 1px solid #e8eaed;
+    background: #fff;
+    padding: 16px 0;
+  }
+  .footer-text {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #6b7280;
+  }
+  .sep {
+    margin: 0 10px;
+    color: #d1d5db;
+  }
+  .admin-link {
+    color: #9ca3af;
+    text-decoration: none;
+  }
+  .admin-link:hover {
+    color: #6b7280;
+    text-decoration: underline;
+  }
+  a.admin-link {
+    cursor: pointer;
+  }
+</style>

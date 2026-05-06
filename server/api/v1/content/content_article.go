@@ -194,6 +194,40 @@ func (a *ArticleApi) PublishArticle(c *gin.Context) {
 	response.OkWithMessage("发布成功", c)
 }
 
+// GetPublishedList
+// @Tags      ContentArticle
+// @Summary   公开访问：分页获取已发布文章（不含正文）
+// @accept    application/json
+// @Produce   application/json
+// @Param     page     query     int     true  "页码"
+// @Param     pageSize query     int     true  "每页大小"
+// @Param     keyword  query     string  false "关键字"
+// @Success   200      {object}  response.Response{data=response.PageResult,msg=string}  "列表"
+// @Router    /public/articles [get]
+func (a *ArticleApi) GetPublishedList(c *gin.Context) {
+	var pageInfo request.PageInfo
+	if err := c.ShouldBindQuery(&pageInfo); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	if err := utils.Verify(pageInfo, utils.PageInfoVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	list, total, err := articleService.GetPublishedList(pageInfo)
+	if err != nil {
+		global.GVA_LOG.Error("获取公开文章列表失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
+		return
+	}
+	response.OkWithDetailed(response.PageResult{
+		List:     list,
+		Total:    total,
+		Page:     pageInfo.Page,
+		PageSize: pageInfo.PageSize,
+	}, "获取成功", c)
+}
+
 // GetPublishedBySlug
 // @Tags      ContentArticle
 // @Summary   公开访问：通过 slug 获取已发布文章

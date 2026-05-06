@@ -59,6 +59,49 @@ export const useUserStore = defineStore('user', () => {
     }
     return res
   }
+  /**
+   * 会员端登录：与后台共用鉴权接口，但不加载管理端动态路由，登录后留在站点前台。
+   */
+  const MemberLoginIn = async (loginInfo) => {
+    try {
+      loadingInstance.value = ElLoading.service({
+        fullscreen: true,
+        text: '登录中，请稍候...'
+      })
+      const res = await login(loginInfo)
+      if (res.code !== 0) {
+        return false
+      }
+      setUserInfo(res.data.user)
+      setToken(res.data.token)
+      const isWindows = /windows/i.test(navigator.userAgent)
+      window.localStorage.setItem('osType', isWindows ? 'WIN' : 'MAC')
+      return true
+    } catch (error) {
+      console.error('MemberLoginIn error:', error)
+      return false
+    } finally {
+      loadingInstance.value?.close()
+    }
+  }
+
+  /** 会员端退出：吊销 token 并清空会话，不整页刷新 */
+  const MemberLogout = async () => {
+    try {
+      await jsonInBlacklist()
+    } catch {
+      /* 忽略吊销失败，仍清理本地 */
+    }
+    await ClearStorage()
+    setUserInfo({
+      uuid: '',
+      nickName: '',
+      headerImg: '',
+      authority: {}
+    })
+    await router.replace({ name: 'MemberEntryLogin' })
+  }
+
   /* 登录*/
   const LoginIn = async (loginInfo) => {
     try {
@@ -142,6 +185,8 @@ export const useUserStore = defineStore('user', () => {
     ResetUserInfo,
     GetUserInfo,
     LoginIn,
+    MemberLoginIn,
+    MemberLogout,
     LoginOut,
     setToken,
     loadingInstance,

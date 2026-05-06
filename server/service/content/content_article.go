@@ -90,6 +90,24 @@ func (s *ArticleService) PublishArticle(id uint, authorID uint) error {
 	}).Error
 }
 
+func (s *ArticleService) GetPublishedList(page request.PageInfo) (list []contentModel.ContentArticle, total int64, err error) {
+	q := global.GVA_DB.Model(&contentModel.ContentArticle{}).Where("status = ?", "published")
+	if strings.TrimSpace(page.Keyword) != "" {
+		kw := "%" + strings.TrimSpace(page.Keyword) + "%"
+		q = q.Where("title LIKE ? OR summary LIKE ?", kw, kw)
+	}
+	err = q.Count(&total).Error
+	if err != nil {
+		return nil, 0, err
+	}
+	err = q.Session(&gorm.Session{}).
+		Omit("content").
+		Order("published_at DESC, id DESC").
+		Scopes(page.Paginate()).
+		Find(&list).Error
+	return
+}
+
 func (s *ArticleService) GetPublishedBySlug(slug string) (contentModel.ContentArticle, error) {
 	slug = strings.TrimSpace(slug)
 	if slug == "" {

@@ -237,9 +237,7 @@
   }
 
   const copyPublicUrl = async (row) => {
-    const base = window.location.origin
-    const apiPrefix = import.meta.env.VITE_BASE_API || '/api'
-    const url = `${base}${apiPrefix}/public/article/${row.slug}`
+    const url = `${window.location.origin}/web/#/article/${row.slug}`
     try {
       await navigator.clipboard.writeText(url)
       ElMessage.success('已复制公开链接')

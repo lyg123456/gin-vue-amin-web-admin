@@ -36,6 +36,7 @@ export default ({ mode }) => {
     }
   }
 
+  // 根路径部署；管理端访问 /admin/ ，用户端访问 /web/（开发见下方 SPA 回退插件）
   const base = '/'
   const root = './'
   const outDir = 'dist'
@@ -56,7 +57,7 @@ export default ({ mode }) => {
     },
     server: {
       // 如果使用docker-compose开发模式，设置为false
-      open: true,
+      open: '/admin/',
       port: Number(env.VITE_CLI_PORT),
       proxy: {
         // 把key的路径代理到target位置
@@ -94,6 +95,34 @@ export default ({ mode }) => {
     esbuild,
     optimizeDeps,
     plugins: [
+      {
+        name: 'admin-web-spa-entry',
+        configureServer(server) {
+          server.middlewares.use((req, res, next) => {
+            const raw = (req.url || '').split('?')[0]
+            const q = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : ''
+            if (
+              raw === '/admin' ||
+              raw === '/admin/' ||
+              raw === '/web' ||
+              raw === '/web/'
+            ) {
+              req.url = '/' + q
+              return next()
+            }
+            if (
+              (raw === '/' || raw === '') &&
+              req.method === 'GET' &&
+              String(req.headers.accept || '').includes('text/html')
+            ) {
+              res.writeHead(302, { Location: '/admin/' })
+              res.end()
+              return
+            }
+            next()
+          })
+        }
+      },
       env.VITE_POSITION === 'open' &&
       vueDevTools({ launchEditor: env.VITE_EDITOR }),
       legacyPlugin({
