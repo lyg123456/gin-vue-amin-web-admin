@@ -3,7 +3,7 @@ import service from '@/utils/request'
 /** 公开：已发布文章分页列表（无正文） */
 export const getPublicArticleList = (params) => {
   return service({
-    url: '/public/articles',
+    url: '/public/contentArticles',
     method: 'get',
     params,
     donNotShowLoading: true

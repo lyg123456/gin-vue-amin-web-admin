@@ -203,7 +203,7 @@ func (a *ArticleApi) PublishArticle(c *gin.Context) {
 // @Param     pageSize query     int     true  "每页大小"
 // @Param     keyword  query     string  false "关键字"
 // @Success   200      {object}  response.Response{data=response.PageResult,msg=string}  "列表"
-// @Router    /public/articles [get]
+// @Router    /public/contentArticles [get]
 func (a *ArticleApi) GetPublishedList(c *gin.Context) {
 	var pageInfo request.PageInfo
 	if err := c.ShouldBindQuery(&pageInfo); err != nil {

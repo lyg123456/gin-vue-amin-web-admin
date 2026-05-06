@@ -1,5 +1,18 @@
 <template>
   <div class="member-center">
+    <section class="panel article-panel">
+      <PortalArticleFeed
+        title="获客内容 · 站点文章"
+        subtitle="与首页同源：展示管理端「内容 → 文章」中已发布的文章，访客无需登录即可浏览。"
+        :show-search="false"
+        show-pager
+        :page-size="8"
+      />
+      <div class="more-row">
+        <router-link class="more-link" to="/">前往首页 · 搜索与浏览全部</router-link>
+      </div>
+    </section>
+
     <section class="panel">
       <h1>会员中心</h1>
       <p class="hint">浏览文章无需登录；登录后可使用后续会员功能（收藏、评论等可对接扩展）。</p>
@@ -30,7 +43,7 @@
       <ul>
         <li>会员登录与<strong>站点账号</strong>一致，用于访问需要登录的前台能力；与「管理后台」入口分离。</li>
         <li>需要进入 <strong>Gin-Vue-Admin 管理后台</strong> 时，请使用顶栏「管理员入口」。</li>
-        <li>文章阅读：<router-link to="/">返回首页</router-link>。</li>
+        <li>本页上方已列出<strong>已发布文章</strong>；更多检索与分页请见<router-link to="/">首页</router-link>。</li>
       </ul>
     </section>
   </div>
@@ -43,6 +56,7 @@
   import { ElMessageBox } from 'element-plus'
   import { useUserStore } from '@/pinia/modules/user'
   import { getUrl } from '@/utils/image'
+  import PortalArticleFeed from '@/view/portal/components/PortalArticleFeed.vue'
 
   const router = useRouter()
   const userStore = useUserStore()
@@ -166,5 +180,20 @@
     padding-left: 1.2rem;
     color: #4b5563;
     line-height: 1.8;
+  }
+  .article-panel {
+    padding-bottom: 16px;
+  }
+  .more-row {
+    margin-top: 8px;
+    text-align: right;
+  }
+  .more-link {
+    font-size: 0.9rem;
+    color: #2563eb;
+    text-decoration: none;
+  }
+  .more-link:hover {
+    text-decoration: underline;
   }
 </style>
