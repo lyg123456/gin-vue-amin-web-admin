@@ -21,6 +21,9 @@ func (r *ArticleRouter) InitContentArticleRouter(private *gin.RouterGroup, publi
 		// 列表路径不可使用 article/xxx 形式，否则会被 article/:slug 抢占（如 xxx=list）
 		articlePublic.GET("contentArticles", articleApi.GetPublishedList)
 		articlePublic.GET("article/:slug", articleApi.GetPublishedBySlug)
+
+		articlePublic.GET("web/stats", articleApi.CountWebView)       // 统计+返回
+		articlePublic.GET("web/stats/info", articleApi.GetWebViewCount) // 仅查询
 	}
 }
 

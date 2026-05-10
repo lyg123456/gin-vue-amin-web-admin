@@ -11,9 +11,55 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
+	"sync"
 )
 
 type ArticleApi struct{}
+
+ 
+var countMutex sync.Mutex
+ 
+
+func (a *ArticleApi) CountWebView(c *gin.Context) {
+
+ 
+	countMutex.Lock()
+	defer countMutex.Unlock()
+
+	var stats contentModel.SiteStats
+	// 固定查第一条数据
+	err := global.GVA_DB.First(&stats).Error
+	if err != nil {
+		// 没有就创建
+		stats = contentModel.SiteStats{
+			Total: 0,
+			Today: 0,
+		}
+		global.GVA_DB.Create(&stats)
+	}
+
+	stats.Total++
+	stats.Today++
+	global.GVA_DB.Save(&stats)
+
+	response.OkWithDetailed(gin.H{
+		"total": stats.Total,
+		"today": stats.Today,
+	}, "统计成功", c)
+}
+
+func (a *ArticleApi) GetWebViewCount(c *gin.Context) {
+	countMutex.Lock()
+	defer countMutex.Unlock()
+
+	var stats contentModel.SiteStats
+	global.GVA_DB.FirstOrCreate(&stats, contentModel.SiteStats{})
+
+	response.OkWithDetailed(gin.H{
+		"total": stats.Total,
+		"today": stats.Today,
+	}, "获取成功", c)
+}
 
 // CreateArticle
 // @Tags      ContentArticle

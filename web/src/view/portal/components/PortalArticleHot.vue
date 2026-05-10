@@ -4,9 +4,7 @@
       <h2 class="feed-title">{{ title }}</h2>
       <p v-if="subtitle" class="feed-sub">{{ subtitle }}</p>
        <!-- 👉 这里显示页面访问量 -->
-      <div class="visit-info">
-        总访问量：{{ visit.total }}　｜　今日访问：{{ visit.today }}
-      </div>
+      
       <div v-if="showSearch" class="toolbar">
         <el-input
           v-model="keyword"

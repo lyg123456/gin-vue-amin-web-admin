@@ -19,10 +19,11 @@
     </main>
     <footer class="portal-footer">
       <div class="portal-inner footer-text">
-        <span>本站文章由管理后台发布 · 仅供演示</span>
-        <span class="sep">|</span>
-        <a class="admin-link" :href="adminLoginHref">管理员入口</a>
+        <span>本站文章由管理后台发布 </span>
+       <!-- <span class="sep">|</span>
+         <a class="admin-link" :href="adminLoginHref">管理员入口</a>-->
       </div>
+      
     </footer>
   </div>
 </template>
