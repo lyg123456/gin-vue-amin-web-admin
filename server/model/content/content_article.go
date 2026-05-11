@@ -14,6 +14,10 @@ type ContentArticle struct {
 
 	AuthorID uint `json:"authorId" form:"authorId" gorm:"index;comment:作者用户ID"`
 
+	// CategoryID 关联 content_article_categories；0 表示未分类
+	CategoryID uint                      `json:"categoryId" form:"categoryId" gorm:"index;default:0;comment:分类ID"`
+	Category   *ContentArticleCategory `json:"category,omitempty" gorm:"foreignKey:CategoryID;references:ID"`
+
 	Title   string `json:"title" form:"title" gorm:"type:varchar(200);index;comment:标题"`
 	Slug    string `json:"slug" form:"slug" gorm:"type:varchar(200);uniqueIndex;comment:SEO友好链接slug"`
 	Summary string `json:"summary" form:"summary" gorm:"type:varchar(500);comment:摘要"`

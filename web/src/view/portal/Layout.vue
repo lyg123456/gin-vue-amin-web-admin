@@ -12,34 +12,64 @@
         </nav>
       </div>
     </header>
+    <div v-if="isHome" class="portal-hero-wrap portal-inner">
+      <PortalHomeCarousel />
+    </div>
     <main class="portal-main">
       <div class="portal-inner">
         <router-view />
       </div>
     </main>
     <footer class="portal-footer">
-      <div class="portal-inner footer-text">
-        <span>本站文章由管理后台发布 </span>
-       <!-- <span class="sep">|</span>
-         <a class="admin-link" :href="adminLoginHref">管理员入口</a>-->
+      <div class="portal-inner footer-inner">
+        <div class="footer-row">
+          <div class="footer-left">
+            <span>©2008-2026 内容站 版权所有</span>
+            <a
+              class="footer-muted"
+              href="https://beian.miit.gov.cn/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >陕ICP备09016523号</a>
+            <span class="footer-beian">
+              <span class="footer-beian-icon" aria-hidden="true" />
+              <a class="footer-muted" href="#" rel="noopener">陕公网安备61019002000368号</a>
+            </span>
+          </div>
+          <nav class="footer-nav" aria-label="页脚链接">
+            <template v-for="(item, idx) in footerNavLinks" :key="item.label">
+              <span v-if="idx > 0" class="footer-bar">|</span>
+              <a :href="item.href" class="footer-nav-link">{{ item.label }}</a>
+            </template>
+          </nav>
+        </div>
       </div>
-      
     </footer>
   </div>
 </template>
 
 <script setup>
   import { computed } from 'vue'
+  import { useRoute } from 'vue-router'
   import { storeToRefs } from 'pinia'
   import { useUserStore } from '@/pinia/modules/user'
+  import PortalHomeCarousel from '@/view/portal/components/PortalHomeCarousel.vue'
 
+  const route = useRoute()
   const userStore = useUserStore()
   const { token } = storeToRefs(userStore)
 
-  const adminLoginHref = computed(() => {
-    const o = typeof window !== 'undefined' ? window.location.origin : ''
-    return `${o}/admin/#/login`
-  })
+  const isHome = computed(() => route.name === 'WebHome')
+
+  /** 页脚右侧导航（先写死，后续可接 CMS / 路由） */
+  const footerNavLinks = [
+    { label: '公司简介', href: '#' },
+    { label: '联系方式', href: '#' },
+    { label: '合作代理', href: '#' },
+    { label: '隐私政策', href: '#' },
+    { label: '使用协议', href: '#' },
+    { label: '意见反馈', href: '#' }
+  ]
 </script>
 
 <style scoped>
@@ -110,29 +140,100 @@
     flex: 1;
     padding: 28px 0 40px;
   }
+
+  .portal-hero-wrap {
+    padding-top: 12px;
+    padding-bottom: 4px;
+    box-sizing: border-box;
+  }
+
   .portal-footer {
-    border-top: 1px solid var(--portal-hairline, #f3f4f6);
-    background: var(--portal-panel-bg, #ffffff);
-    padding: 16px 0;
+    border-top: 1px solid #e5e5e5;
+    background: #f5f5f5;
+    padding: 14px 0 18px;
   }
-  .footer-text {
-    text-align: center;
-    font-size: 0.8rem;
-    color: var(--portal-text-secondary, #6b7280);
+
+  .footer-inner {
+    box-sizing: border-box;
   }
-  .sep {
-    margin: 0 10px;
-    color: #d1d5db;
+
+  .footer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #333333;
   }
-  .admin-link {
-    color: #9ca3af;
+
+  .footer-left {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 14px;
+    min-width: 0;
+  }
+
+  .footer-muted {
+    color: #555555;
     text-decoration: none;
   }
-  .admin-link:hover {
-    color: #6b7280;
+
+  .footer-muted:hover {
+    color: #2563eb;
     text-decoration: underline;
   }
-  a.admin-link {
-    cursor: pointer;
+
+  .footer-beian {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .footer-beian-icon {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #5a9fd4, #1a5276);
+    flex-shrink: 0;
+  }
+
+  .footer-nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0;
+    min-width: 0;
+  }
+
+  .footer-bar {
+    margin: 0 8px;
+    color: #cccccc;
+    user-select: none;
+  }
+
+  .footer-nav-link {
+    color: #333333;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .footer-nav-link:hover {
+    color: #2563eb;
+    text-decoration: underline;
+  }
+
+  @media (max-width: 720px) {
+    .footer-row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .footer-nav {
+      justify-content: flex-start;
+    }
   }
 </style>

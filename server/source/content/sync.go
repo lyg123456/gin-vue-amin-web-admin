@@ -2,6 +2,7 @@ package content
 
 import (
 	adapter "github.com/casbin/gorm-adapter/v3"
+	contentModel "github.com/flipped-aurora/gin-vue-admin/server/model/content"
 	sysModel "github.com/flipped-aurora/gin-vue-admin/server/model/system"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -74,6 +75,11 @@ func SyncContentInit(db *gorm.DB) error {
 		{ApiGroup: "内容获客", Method: "GET", Path: "/contentArticle/findArticle", Description: "获取单篇文章"},
 		{ApiGroup: "内容获客", Method: "GET", Path: "/contentArticle/getArticleList", Description: "获取文章列表"},
 		{ApiGroup: "内容获客", Method: "POST", Path: "/contentArticle/publishArticle", Description: "发布文章"},
+		{ApiGroup: "内容获客", Method: "GET", Path: "/contentArticleCategory/getCategoryTree", Description: "文章分类树"},
+		{ApiGroup: "内容获客", Method: "GET", Path: "/contentArticleCategory/getCategoryList", Description: "文章分类列表"},
+		{ApiGroup: "内容获客", Method: "POST", Path: "/contentArticleCategory/createCategory", Description: "创建文章分类"},
+		{ApiGroup: "内容获客", Method: "PUT", Path: "/contentArticleCategory/updateCategory", Description: "更新文章分类"},
+		{ApiGroup: "内容获客", Method: "DELETE", Path: "/contentArticleCategory/deleteCategory", Description: "删除文章分类"},
 		{ApiGroup: "系统初始化", Method: "POST", Path: "/contentInit/sync", Description: "同步内容获客初始化数据"},
 	}
 	for _, api := range apis {
@@ -100,6 +106,11 @@ func SyncContentInit(db *gorm.DB) error {
 		{"GET", "/contentArticle/findArticle"},
 		{"GET", "/contentArticle/getArticleList"},
 		{"POST", "/contentArticle/publishArticle"},
+		{"GET", "/contentArticleCategory/getCategoryTree"},
+		{"GET", "/contentArticleCategory/getCategoryList"},
+		{"POST", "/contentArticleCategory/createCategory"},
+		{"PUT", "/contentArticleCategory/updateCategory"},
+		{"DELETE", "/contentArticleCategory/deleteCategory"},
 		{"POST", "/contentInit/sync"},
 	}
 	for _, role := range []string{"888", "8881", "9528"} {
@@ -117,6 +128,28 @@ func SyncContentInit(db *gorm.DB) error {
 			if err := db.Create(&rule).Error; err != nil {
 				return errors.Wrap(err, "写入内容获客Casbin规则失败")
 			}
+		}
+	}
+
+	// -------- 4) 默认文章分类（表为空时写入示例一级/二级）--------
+	var catCnt int64
+	if err := db.Model(&contentModel.ContentArticleCategory{}).Count(&catCnt).Error; err != nil {
+		return err
+	}
+	if catCnt == 0 {
+		root1 := contentModel.ContentArticleCategory{ParentID: 0, Name: "新闻动态", Sort: 1, Enabled: true}
+		if err := db.Create(&root1).Error; err != nil {
+			return errors.Wrap(err, "写入默认文章分类失败")
+		}
+		root2 := contentModel.ContentArticleCategory{ParentID: 0, Name: "文档教程", Sort: 2, Enabled: true}
+		if err := db.Create(&root2).Error; err != nil {
+			return errors.Wrap(err, "写入默认文章分类失败")
+		}
+		if err := db.Create(&contentModel.ContentArticleCategory{ParentID: root1.ID, Name: "公司动态", Sort: 1, Enabled: true}).Error; err != nil {
+			return errors.Wrap(err, "写入默认文章子分类失败")
+		}
+		if err := db.Create(&contentModel.ContentArticleCategory{ParentID: root2.ID, Name: "使用指南", Sort: 1, Enabled: true}).Error; err != nil {
+			return errors.Wrap(err, "写入默认文章子分类失败")
 		}
 	}
 

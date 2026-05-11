@@ -27,9 +27,10 @@
     background-color: rgb(30 41 59);
   }
 
+  /* min-height + 不锁死 overflow，门户 /web 可整页滚动；管理端内部仍有各自 overflow-auto */
   #app {
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
+    overflow-x: hidden;
     font-weight: 400 !important;
     background-color: #f5f5f5;
   }

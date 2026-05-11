@@ -47,6 +47,7 @@
   "/src/view/person/person.vue": "Person",
   "/src/view/portal/ArticleDetail.vue": "ArticleDetail",
   "/src/view/portal/components/PortalArticleFeed.vue": "PortalArticleFeed",
+  "/src/view/portal/components/PortalHomeCarousel.vue": "PortalHomeCarousel",
   "/src/view/portal/Home.vue": "Home",
   "/src/view/portal/Layout.vue": "Layout",
   "/src/view/portal/MemberCenter.vue": "MemberCenter",

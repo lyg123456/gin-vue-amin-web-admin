@@ -19,6 +19,9 @@ func (s *ArticleService) CreateArticle(article *contentModel.ContentArticle) err
 	if article.Slug == "" || article.Title == "" {
 		return errors.New("title/slug 不能为空")
 	}
+	if err := articleCategoryService.ValidateCategoryIDForArticle(article.CategoryID); err != nil {
+		return err
+	}
 	return global.GVA_DB.Create(article).Error
 }
 
@@ -30,6 +33,9 @@ func (s *ArticleService) UpdateArticle(article *contentModel.ContentArticle) err
 	article.Title = strings.TrimSpace(article.Title)
 	if article.Slug == "" || article.Title == "" {
 		return errors.New("title/slug 不能为空")
+	}
+	if err := articleCategoryService.ValidateCategoryIDForArticle(article.CategoryID); err != nil {
+		return err
 	}
 	return global.GVA_DB.Save(article).Error
 }
@@ -47,7 +53,7 @@ func (s *ArticleService) DeleteArticle(id uint, authorID uint) error {
 
 func (s *ArticleService) FindArticle(id uint, authorID uint) (contentModel.ContentArticle, error) {
 	var a contentModel.ContentArticle
-	db := global.GVA_DB.Where("id = ?", id)
+	db := global.GVA_DB.Preload("Category").Where("id = ?", id)
 	if authorID > 0 {
 		db = db.Where("author_id = ?", authorID)
 	}
@@ -56,7 +62,7 @@ func (s *ArticleService) FindArticle(id uint, authorID uint) (contentModel.Conte
 }
 
 func (s *ArticleService) GetArticleList(authorID uint, page request.PageInfo, status string) (list []contentModel.ContentArticle, total int64, err error) {
-	db := global.GVA_DB.Model(&contentModel.ContentArticle{}).Order("id desc")
+	db := global.GVA_DB.Model(&contentModel.ContentArticle{}).Preload("Category").Order("id desc")
 	if authorID > 0 {
 		db = db.Where("author_id = ?", authorID)
 	}
@@ -101,6 +107,7 @@ func (s *ArticleService) GetPublishedList(page request.PageInfo) (list []content
 		return nil, 0, err
 	}
 	err = q.Session(&gorm.Session{}).
+		Preload("Category").
 		Omit("content").
 		Order("published_at DESC, id DESC").
 		Scopes(page.Paginate()).
@@ -114,7 +121,7 @@ func (s *ArticleService) GetPublishedBySlug(slug string) (contentModel.ContentAr
 		return contentModel.ContentArticle{}, errors.New("slug 不能为空")
 	}
 	var a contentModel.ContentArticle
-	err := global.GVA_DB.Where("slug = ? AND status = ?", slug, "published").First(&a).Error
+	err := global.GVA_DB.Preload("Category").Where("slug = ? AND status = ?", slug, "published").First(&a).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return contentModel.ContentArticle{}, err
 	}

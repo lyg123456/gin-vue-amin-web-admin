@@ -7,6 +7,7 @@ type RouterGroup struct {
 }
 
 var (
-	articleApi = api.ApiGroupApp.ContentApiGroup.ArticleApi
+	articleApi         = api.ApiGroupApp.ContentApiGroup.ArticleApi
+	articleCategoryApi = api.ApiGroupApp.ContentApiGroup.ArticleCategoryApi
 )
 
