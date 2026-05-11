@@ -127,9 +127,9 @@
   .card {
     width: 100%;
     max-width: 420px;
-    background: #fff;
-    border: 1px solid #e8eaed;
-    border-radius: 12px;
+    background: var(--portal-panel-bg, #ffffff);
+    border: none;
+    border-radius: var(--portal-radius, 12px);
     padding: 28px 24px 20px;
   }
   h1 {
@@ -139,7 +139,7 @@
   .sub {
     margin: 0 0 24px;
     font-size: 0.9rem;
-    color: #6b7280;
+    color: var(--portal-text-secondary, #6b7280);
   }
   .captcha-row {
     display: flex;
@@ -167,11 +167,11 @@
   .footer-links {
     text-align: center;
     font-size: 0.85rem;
-    color: #6b7280;
+    color: var(--portal-text-secondary, #6b7280);
     padding-top: 8px;
   }
   .footer-links a {
-    color: #2563eb;
+    color: var(--portal-link, #2563eb);
     text-decoration: none;
   }
   .footer-links a:hover {

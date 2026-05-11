@@ -25,9 +25,9 @@
     max-width: 640px;
   }
   .panel {
-    background: #fff;
-    border-radius: 12px;
-    border: 1px solid #e8eaed;
+    background: var(--portal-panel-bg, #ffffff);
+    border-radius: var(--portal-radius, 12px);
+    border: none;
     padding: 24px;
   }
   h1 {
@@ -36,14 +36,14 @@
   }
   .lead {
     margin: 0 0 16px;
-    color: #4b5563;
+    color: var(--portal-text-body, #4b5563);
     line-height: 1.65;
     font-size: 0.95rem;
   }
   ul {
     margin: 0 0 24px;
     padding-left: 1.2rem;
-    color: #4b5563;
+    color: var(--portal-text-body, #4b5563);
     line-height: 1.8;
   }
   code {

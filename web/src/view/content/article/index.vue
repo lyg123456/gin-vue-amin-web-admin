@@ -86,6 +86,10 @@
         <el-form-item label="摘要">
           <el-input v-model="form.summary" type="textarea" :rows="2" />
         </el-form-item>
+        <el-form-item label="配图">
+          <SelectImage v-model="galleryUrls" multiple :max-update-count="6" file-type="image" />
+          <p class="field-tip">最多 6 张，对应库字段 <code>cover_image</code>（多图逗号分隔保存）</p>
+        </el-form-item>
         <el-form-item label="SEO 标题">
           <el-input v-model="form.seoTitle" placeholder="留空则可用标题替代（后续可优化）" />
         </el-form-item>
@@ -107,6 +111,7 @@
   import { ref } from 'vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import { formatDate } from '@/utils/format'
+  import SelectImage from '@/components/selectImage/selectImage.vue'
   import {
     createContentArticle,
     updateContentArticle,
@@ -172,16 +177,29 @@
   })
 
   const form = ref(emptyForm())
+  /** 多图上传，提交时写入 form.coverImage（逗号分隔） */
+  const galleryUrls = ref([])
+
+  const parseCoverToGallery = (cover) => {
+    if (!cover) return []
+    return String(cover)
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .slice(0, 6)
+  }
 
   const openDrawer = () => {
     drawerType.value = 'create'
     form.value = emptyForm()
+    galleryUrls.value = []
     drawerVisible.value = true
   }
 
   const closeDrawer = () => {
     drawerVisible.value = false
     form.value = emptyForm()
+    galleryUrls.value = []
   }
 
   const editArticle = async (row) => {
@@ -189,16 +207,19 @@
     if (res.code === 0) {
       drawerType.value = 'update'
       form.value = res.data
+      galleryUrls.value = parseCoverToGallery(res.data.coverImage)
       drawerVisible.value = true
     }
   }
 
   const submitDrawer = async () => {
+    const urls = Array.isArray(galleryUrls.value) ? galleryUrls.value.slice(0, 6) : []
+    const payload = { ...form.value, coverImage: urls.join(',') }
     let res
     if (drawerType.value === 'update') {
-      res = await updateContentArticle(form.value)
+      res = await updateContentArticle(payload)
     } else {
-      res = await createContentArticle(form.value)
+      res = await createContentArticle(payload)
     }
     if (res.code === 0) {
       ElMessage.success('保存成功')
@@ -247,5 +268,18 @@
   }
 </script>
 
-<style scoped></style>
+<style scoped>
+  .field-tip {
+    margin: 8px 0 0;
+    font-size: 12px;
+    color: #909399;
+    line-height: 1.5;
+  }
+  .field-tip code {
+    font-size: 12px;
+    background: #f4f4f5;
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+</style>
 

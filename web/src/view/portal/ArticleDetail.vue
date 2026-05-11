@@ -14,7 +14,30 @@
           <span>阅读 {{ article.viewCount ?? 0 }}</span>
         </div>
         <p v-if="article.summary" class="summary">{{ article.summary }}</p>
-        <img v-if="article.coverImage" :src="coverSrc(article.coverImage)" alt="" class="hero-cover" />
+        <div
+          v-if="coverUrls.length"
+          class="covers"
+          :class="{
+            'covers--multi': coverUrls.length > 1,
+            'covers--single': coverUrls.length === 1
+          }"
+        >
+          <div
+            v-for="(u, i) in coverUrls"
+            :key="i"
+            :class="coverUrls.length === 1 ? 'cover-wrap-hero' : 'cover-wrap-cell'"
+          >
+            <el-image
+              :src="coverSrc(u)"
+              :preview-src-list="previewList"
+              :initial-index="i"
+              :fit="coverUrls.length === 1 ? 'contain' : 'cover'"
+              preview-teleported
+              hide-on-click-modal
+              class="cover-el"
+            />
+          </div>
+        </div>
       </header>
       <div v-if="article.contentType === 'html'" class="body html-body" v-html="article.content" />
       <div v-else class="body md-body" v-html="htmlFromMd" />
@@ -31,7 +54,7 @@
   import { getPublicArticleBySlug } from '@/api/publicArticle'
   import config from '@/core/config'
   import { formatDate } from '@/utils/format'
-  import { getUrl } from '@/utils/image'
+  import { getUrl, coverImageUrls } from '@/utils/image'
 
   const route = useRoute()
   const article = ref(null)
@@ -42,6 +65,10 @@
   })
 
   const coverSrc = (url) => getUrl(url)
+
+  const coverUrls = computed(() => coverImageUrls(article.value?.coverImage))
+
+  const previewList = computed(() => coverUrls.value.map((u) => coverSrc(u)))
 
   const marked = new Marked(
     markedHighlight({
@@ -99,9 +126,9 @@
     padding-left: 0;
   }
   .article {
-    background: #fff;
-    border-radius: 12px;
-    border: 1px solid #e8eaed;
+    background: var(--portal-panel-bg, #ffffff);
+    border-radius: var(--portal-radius, 12px);
+    border: none;
     padding: 28px 24px 40px;
   }
   .article-head h1 {
@@ -123,17 +150,64 @@
     line-height: 1.6;
     font-size: 1rem;
   }
-  .hero-cover {
-    width: 100%;
-    max-height: 360px;
-    object-fit: cover;
-    border-radius: 8px;
+  .covers {
     margin-bottom: 24px;
+  }
+  /* 单图：定高画幅 + contain，避免竖图/Logo 被 cover 裁切 */
+  .covers--single .cover-wrap-hero {
+    width: 100%;
+    height: max(220px, min(52vh, 480px));
+    border-radius: var(--portal-radius, 12px);
+    overflow: hidden;
+    border: none;
+    background: #ffffff;
+  }
+  .covers--single .cover-wrap-hero .cover-el {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .covers--single .cover-wrap-hero :deep(.el-image),
+  .covers--single .cover-wrap-hero :deep(.el-image__wrapper) {
+    width: 100% !important;
+    height: 100% !important;
+  }
+  .covers--single .cover-wrap-hero :deep(.el-image__inner) {
+    cursor: zoom-in;
+    object-position: center center;
+  }
+  .covers--multi {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (min-width: 720px) {
+    .covers--multi {
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+  }
+  .cover-wrap-cell {
+    aspect-ratio: 4 / 3;
+    border-radius: 10px;
+    overflow: hidden;
+    border: none;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
+  }
+  .cover-wrap-cell .cover-el {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .cover-wrap-cell :deep(.el-image__inner) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: zoom-in;
   }
   .body {
     font-size: 1rem;
     line-height: 1.75;
-    color: #374151;
+    color: var(--portal-text-body, #4b5563);
   }
 </style>
 

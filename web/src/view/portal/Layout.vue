@@ -47,8 +47,19 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background: #f6f7f9;
+    background: var(--portal-bg, #f5f5f5);
     color: #1a1a1a;
+    /* 页面画布 #f5f5f5，内容块仍用 --portal-panel-bg */
+    --portal-bg: #f5f5f5;
+    --portal-panel-bg: #ffffff;
+    --portal-muted-bg: #ffffff;
+    --portal-radius: 12px;
+    --portal-card-bg: #ffffff;
+    --portal-text-secondary: #6b7280;
+    --portal-text-body: #4b5563;
+    --portal-text-meta: #9ca3af;
+    --portal-link: #2563eb;
+    --portal-hairline: #f3f4f6;
   }
   .portal-inner {
     max-width: 960px;
@@ -57,8 +68,8 @@
     width: 100%;
   }
   .portal-header {
-    background: #fff;
-    border-bottom: 1px solid #e8eaed;
+    background: var(--portal-panel-bg, #ffffff);
+    border-bottom: 1px solid var(--portal-hairline, #f3f4f6);
     position: sticky;
     top: 0;
     z-index: 10;
@@ -100,14 +111,14 @@
     padding: 28px 0 40px;
   }
   .portal-footer {
-    border-top: 1px solid #e8eaed;
-    background: #fff;
+    border-top: 1px solid var(--portal-hairline, #f3f4f6);
+    background: var(--portal-panel-bg, #ffffff);
     padding: 16px 0;
   }
   .footer-text {
     text-align: center;
     font-size: 0.8rem;
-    color: #6b7280;
+    color: var(--portal-text-secondary, #6b7280);
   }
   .sep {
     margin: 0 10px;

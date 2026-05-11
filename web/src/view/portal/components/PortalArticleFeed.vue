@@ -24,8 +24,8 @@
     <el-empty v-else-if="!list.length" description="暂无已发布文章，请在管理端「内容 → 文章」中编辑并发布。" />
     <div v-else class="grid">
       <article v-for="item in list" :key="item.ID" class="card" @click="goArticle(item.slug)">
-        <div v-if="item.coverImage" class="cover-wrap">
-          <img :src="coverSrc(item.coverImage)" alt="" class="cover" />
+        <div v-if="firstCoverUrl(item.coverImage)" class="cover-wrap">
+          <img :src="coverSrc(firstCoverUrl(item.coverImage))" alt="" class="cover" />
         </div>
         <div class="card-body">
           <h3 class="title">{{ item.title }}</h3>
@@ -56,6 +56,7 @@
   import { onMounted, ref } from 'vue'
   import { usePublicArticleList } from '@/view/portal/composables/usePublicArticleList'
   import { formatDate } from '@/utils/format'
+  import { firstCoverUrl } from '@/utils/image'
    import axios from 'axios'
 
   const props = defineProps({
@@ -113,7 +114,7 @@
   }
   .feed-sub {
     margin: 0 0 16px;
-    color: #6b7280;
+    color: var(--portal-text-secondary, #6b7280);
     font-size: 0.9rem;
     line-height: 1.5;
   }
@@ -135,16 +136,11 @@
   .card {
     display: flex;
     gap: 14px;
-    background: #fff;
-    border-radius: 12px;
-    border: 1px solid #e8eaed;
+    background: var(--portal-card-bg, #ffffff);
+    border-radius: var(--portal-radius, 12px);
+    border: none;
     overflow: hidden;
     cursor: pointer;
-    transition: box-shadow 0.2s, border-color 0.2s;
-  }
-  .card:hover {
-    border-color: #bfdbfe;
-    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.08);
   }
   .cover-wrap {
     width: 180px;
@@ -173,7 +169,7 @@
   .summary {
     margin: 0 0 10px;
     font-size: 0.88rem;
-    color: #4b5563;
+    color: var(--portal-text-body, #4b5563);
     line-height: 1.45;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -184,7 +180,7 @@
     display: flex;
     gap: 14px;
     font-size: 0.78rem;
-    color: #9ca3af;
+    color: var(--portal-text-meta, #9ca3af);
   }
   .pager {
     margin-top: 20px;
@@ -207,7 +203,8 @@
     font-size: 0.85rem;
     color: #3b82f6;
     margin-bottom: 14px;
-    background: #f0f7ff;
+    background: #ffffff;
+    border: 1px solid var(--portal-hairline, #f3f4f6);
     padding: 6px 12px;
     border-radius: 6px;
     display: inline-block;

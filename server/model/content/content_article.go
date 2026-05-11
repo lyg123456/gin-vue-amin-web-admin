@@ -21,7 +21,8 @@ type ContentArticle struct {
 	Content     string `json:"content" form:"content" gorm:"type:longtext;comment:正文内容"`
 	ContentType string `json:"contentType" form:"contentType" gorm:"type:varchar(20);default:markdown;comment:内容类型 markdown/html"`
 
-	CoverImage string `json:"coverImage" form:"coverImage" gorm:"type:varchar(500);comment:封面图"`
+	// cover_image：多图时存为逗号分隔 URL，最多 6 张（与前端约定）
+	CoverImage string `json:"coverImage" form:"coverImage" gorm:"type:text;comment:封面图(多图逗号分隔)"`
 
 	SEOTitle       string `json:"seoTitle" form:"seoTitle" gorm:"type:varchar(200);comment:SEO标题"`
 	SEOKeywords    string `json:"seoKeywords" form:"seoKeywords" gorm:"type:varchar(500);comment:SEO关键词(逗号分隔)"`

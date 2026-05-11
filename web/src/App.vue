@@ -1,8 +1,5 @@
 <template>
-  <div
-    id="app"
-    class="bg-gray-50 text-slate-700 !dark:text-slate-500 dark:bg-slate-800"
-  >
+  <div id="app" class="text-slate-700 !dark:text-slate-500">
     <el-config-provider :locale="zhCn" :size="appStore.config.global_size">
       <router-view />
       <Application />
@@ -22,10 +19,23 @@
 </script>
 <style lang="scss">
   // 引入初始化样式
+  body {
+    background-color: #f5f5f5;
+  }
+
+  html.dark body {
+    background-color: rgb(30 41 59);
+  }
+
   #app {
     height: 100vh;
     overflow: hidden;
     font-weight: 400 !important;
+    background-color: #f5f5f5;
+  }
+
+  html.dark #app {
+    background-color: rgb(30 41 59);
   }
 
   .el-button {

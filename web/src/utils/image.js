@@ -92,6 +92,23 @@ export default class ImageCompress {
 }
 
 const path = import.meta.env.VITE_FILE_API
+/** 封面多图字段取第一张用于展示 */
+export const firstCoverUrl = (cover) => {
+  if (!cover) return ''
+  const u = String(cover).split(',')[0].trim()
+  return u
+}
+
+/** 封面多图字段解析为 URL 数组（逗号分隔，最多 6 张） */
+export const coverImageUrls = (cover) => {
+  if (!cover) return []
+  return String(cover)
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .slice(0, 6)
+}
+
 export const getUrl = (url) => {
   if (url && url.slice(0, 4) !== 'http') {
     if (path === '/') {

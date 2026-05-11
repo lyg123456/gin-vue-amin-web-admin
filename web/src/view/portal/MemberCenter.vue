@@ -103,13 +103,13 @@
     gap: 20px;
   }
   .panel {
-    background: #fff;
-    border-radius: 12px;
-    border: 1px solid #e8eaed;
+    background: var(--portal-panel-bg, #ffffff);
+    border-radius: var(--portal-radius, 12px);
+    border: none;
     padding: 24px;
   }
   .muted-panel {
-    background: #fafbfc;
+    background: var(--portal-muted-bg, #ffffff);
   }
   h1 {
     margin: 0 0 8px;
@@ -121,7 +121,7 @@
   }
   .hint {
     margin: 0 0 20px;
-    color: #6b7280;
+    color: var(--portal-text-secondary, #6b7280);
     font-size: 0.9rem;
   }
   .user-card {
@@ -155,19 +155,19 @@
   }
   .id-line {
     font-size: 0.85rem;
-    color: #9ca3af;
+    color: var(--portal-text-meta, #9ca3af);
     margin-top: 4px;
   }
   .actions {
     width: 100%;
     flex-basis: 100%;
     padding-top: 8px;
-    border-top: 1px solid #f3f4f6;
+    border-top: 1px solid var(--portal-hairline, #f3f4f6);
     margin-top: 4px;
   }
   .guest p {
     margin: 0 0 16px;
-    color: #4b5563;
+    color: var(--portal-text-body, #4b5563);
     line-height: 1.6;
   }
   .btn-row {
@@ -178,7 +178,7 @@
   ul {
     margin: 0;
     padding-left: 1.2rem;
-    color: #4b5563;
+    color: var(--portal-text-body, #4b5563);
     line-height: 1.8;
   }
   .article-panel {
@@ -190,7 +190,7 @@
   }
   .more-link {
     font-size: 0.9rem;
-    color: #2563eb;
+    color: var(--portal-link, #2563eb);
     text-decoration: none;
   }
   .more-link:hover {
