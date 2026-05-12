@@ -1,0 +1,34 @@
+# 门户 HTTP 压测（仅用于您拥有或已书面授权的目标）
+# 使用：cd server && go run ./cmd/portal_loadtest -config cmd/portal_loadtest/config.yaml
+
+# 时区（与「时段」判断一致）
+timezone: Asia/Shanghai
+
+# 实际发起 HTTP GET 的地址（浏览器里的 # 不会发给服务器，请写服务端真实路径）
+targets:
+  - url: http://127.0.0.1:8080/web/
+    weight: 1
+
+# 仅在这些时段内发压；格式 HH:MM，左闭右开 [start, end)
+windows:
+  - start: "09:00"
+    end: "12:00"
+  - start: "14:00"
+    end: "17:00"
+  - start: "20:00"
+    end: "22:00"
+
+# 每秒随机 QPS（含边界）
+qps:
+  min: 2000
+  max: 4000
+
+http:
+  timeout: 8s
+  # 空闲连接数，利于高 QPS
+  max_idle_conns: 8192
+  max_idle_conns_per_host: 2048
+  max_conns_per_host: 0
+
+# 每秒最多并发中的请求数（防止协程无限涨；0 表示与当秒 QPS 相同）
+max_inflight_per_sec: 0

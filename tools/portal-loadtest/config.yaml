@@ -1,0 +1,28 @@
+# 门户 HTTP 压测 — 示例配置（复制为 config.yaml 后修改）
+# 警告：仅对您拥有或已书面授权的系统使用。
+
+# 目标根 URL（HTTP 不会发送 # 锚点，门户首页请写 /web/ 路径）
+target: "http://106.12.210.3/web/"
+
+# 时区（时段按此时区解析）
+timezone: "Asia/Shanghai"
+
+# 晚间 20~22 点：结束分钟写 22:59 表示包含 22 点整段（若写 22:00 则只包含到 22:00 这一分钟）
+windows:
+  - { start: "09:00", end: "12:00" }
+  - { start: "14:00", end: "17:00" }
+  - { start: "20:00", end: "22:59" }
+
+# 每秒目标请求数区间 [min, max]（每秒随机一次）
+qps_min: 100
+qps_max: 1000
+
+# 最大并发飞行中请求数（过大可能耗尽本机 fd；过小则达不到高 QPS）
+concurrency: 1000
+
+# 单次 HTTP 超时
+request_timeout: 8s
+
+# 可选：额外请求路径（相对 target 根，如 "#/article/foo" 对服务端无效，应写服务端路径）
+extra_paths:
+  - "/"

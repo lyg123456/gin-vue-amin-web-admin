@@ -79,6 +79,8 @@
       }
     })
   )
+  // GFM 默认已开；显式关闭 breaks，避免「单换行」变成 <br> 与后台录入习惯不一致
+  marked.setOptions({ gfm: true, breaks: false })
 
   const htmlFromMd = computed(() => {
     const raw = article.value?.content
@@ -208,33 +210,186 @@
     font-size: 1rem;
     line-height: 1.75;
     color: var(--portal-text-body, #4b5563);
+    word-break: break-word;
+    overflow-wrap: anywhere;
   }
 </style>
 
 <style>
-  /* 正文 Markdown 区域（非 scoped） */
-  .portal-root .md-body :deep(h1),
-  .portal-root .md-body :deep(h2),
-  .portal-root .md-body :deep(h3) {
-    margin-top: 1.25em;
-    margin-bottom: 0.5em;
-    font-weight: 600;
+  /*
+   * 正文样式必须写在「非 scoped」块里，且不能使用 :deep（:deep 仅对 scoped 生效，否则选择器无效，正文会像「没样式」一样错乱）
+   * 同时覆盖 Markdown 与 HTML 两种 contentType
+   */
+  .portal-root .article .md-body,
+  .portal-root .article .html-body {
+    font-size: 1rem;
+    line-height: 1.75;
+    color: #374151;
+    overflow-x: auto;
   }
-  .portal-root .md-body :deep(p) {
+
+  .portal-root .article .md-body > *:first-child,
+  .portal-root .article .html-body > *:first-child {
+    margin-top: 0;
+  }
+
+  .portal-root .article .md-body > *:last-child,
+  .portal-root .article .html-body > *:last-child {
+    margin-bottom: 0;
+  }
+
+  .portal-root .article .md-body h1,
+  .portal-root .article .md-body h2,
+  .portal-root .article .md-body h3,
+  .portal-root .article .md-body h4,
+  .portal-root .article .md-body h5,
+  .portal-root .article .md-body h6,
+  .portal-root .article .html-body h1,
+  .portal-root .article .html-body h2,
+  .portal-root .article .html-body h3,
+  .portal-root .article .html-body h4,
+  .portal-root .article .html-body h5,
+  .portal-root .article .html-body h6 {
+    margin-top: 1.15em;
+    margin-bottom: 0.45em;
+    font-weight: 600;
+    line-height: 1.35;
+    color: #111827;
+  }
+
+  .portal-root .article .md-body h1:first-child,
+  .portal-root .article .html-body h1:first-child {
+    margin-top: 0;
+  }
+
+  .portal-root .article .md-body p,
+  .portal-root .article .html-body p {
     margin: 0.75em 0;
   }
-  .portal-root .md-body :deep(pre) {
+
+  .portal-root .article .md-body ul,
+  .portal-root .article .md-body ol,
+  .portal-root .article .html-body ul,
+  .portal-root .article .html-body ol {
+    margin: 0.75em 0;
+    padding-left: 1.5em;
+  }
+
+  .portal-root .article .md-body li,
+  .portal-root .article .html-body li {
+    margin: 0.35em 0;
+  }
+
+  .portal-root .article .md-body li > p,
+  .portal-root .article .html-body li > p {
+    margin: 0.25em 0;
+  }
+
+  .portal-root .article .md-body blockquote,
+  .portal-root .article .html-body blockquote {
+    margin: 1em 0;
+    padding: 0.35em 0 0.35em 1em;
+    border-left: 4px solid #e5e7eb;
+    color: #6b7280;
+    background: #f9fafb;
+  }
+
+  .portal-root .article .md-body hr,
+  .portal-root .article .html-body hr {
+    margin: 1.5em 0;
+    border: none;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .portal-root .article .md-body a,
+  .portal-root .article .html-body a {
+    color: #2563eb;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .portal-root .article .md-body a:hover,
+  .portal-root .article .html-body a:hover {
+    color: #1d4ed8;
+  }
+
+  .portal-root .article .md-body img,
+  .portal-root .article .html-body img,
+  .portal-root .article .md-body video,
+  .portal-root .article .html-body video {
+    max-width: 100%;
+    height: auto;
+    vertical-align: middle;
+  }
+
+  .portal-root .article .md-body table,
+  .portal-root .article .html-body table {
+    width: 100%;
+    max-width: 100%;
+    border-collapse: collapse;
+    margin: 1em 0;
+    font-size: 0.95rem;
+    border: 1px solid #e5e7eb;
+  }
+
+  .portal-root .article .md-body th,
+  .portal-root .article .md-body td,
+  .portal-root .article .html-body th,
+  .portal-root .article .html-body td {
+    border: 1px solid #e5e7eb;
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: top;
+    word-break: break-word;
+  }
+
+  .portal-root .article .md-body th,
+  .portal-root .article .html-body th {
     background: #f3f4f6;
+    font-weight: 600;
+  }
+
+  .portal-root .article .md-body pre,
+  .portal-root .article .html-body pre {
+    margin: 1em 0;
     padding: 14px 16px;
+    background: #f3f4f6;
     border-radius: 8px;
     overflow-x: auto;
     font-size: 0.9rem;
+    line-height: 1.55;
+    white-space: pre;
+    tab-size: 4;
   }
-  .portal-root .md-body :deep(code) {
+
+  .portal-root .article .md-body pre code,
+  .portal-root .article .html-body pre code {
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: inherit;
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    color: inherit;
   }
-  .portal-root .html-body :deep(img) {
-    max-width: 100%;
-    height: auto;
+
+  .portal-root .article .md-body :not(pre) > code,
+  .portal-root .article .html-body :not(pre) > code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.9em;
+    background: #f3f4f6;
+    padding: 0.15em 0.45em;
+    border-radius: 4px;
+    color: #b45309;
+  }
+
+  .portal-root .article .md-body strong,
+  .portal-root .article .html-body strong {
+    font-weight: 600;
+    color: #111827;
+  }
+
+  .portal-root .article .md-body em,
+  .portal-root .article .html-body em {
+    font-style: italic;
   }
 </style>

@@ -30,11 +30,8 @@
               href="https://beian.miit.gov.cn/"
               target="_blank"
               rel="noopener noreferrer"
-            >陕ICP备09016523号</a>
-            <span class="footer-beian">
-              <span class="footer-beian-icon" aria-hidden="true" />
-              <a class="footer-muted" href="#" rel="noopener">陕公网安备61019002000368号</a>
-            </span>
+            >湘ICP备2026010094号</a>
+            
           </div>
           <nav class="footer-nav" aria-label="页脚链接">
             <template v-for="(item, idx) in footerNavLinks" :key="item.label">
