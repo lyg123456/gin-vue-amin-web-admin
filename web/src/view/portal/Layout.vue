@@ -5,6 +5,8 @@
         <router-link to="/" class="brand">内容站</router-link>
         <nav class="nav">
           <router-link to="/">首页</router-link>
+          <router-link :to="{ name: 'WebShortVideoList' }">短视频</router-link>
+          <router-link :to="{ name: 'WebContact' }">联系方式</router-link>
           <router-link to="/member">会员中心</router-link>
           <router-link v-if="!token" class="muted" :to="{ name: 'MemberEntryLogin', query: { redirect: '/member' } }">
             会员登录
@@ -36,7 +38,8 @@
           <nav class="footer-nav" aria-label="页脚链接">
             <template v-for="(item, idx) in footerNavLinks" :key="item.label">
               <span v-if="idx > 0" class="footer-bar">|</span>
-              <a :href="item.href" class="footer-nav-link">{{ item.label }}</a>
+              <router-link v-if="item.route" :to="item.route" class="footer-nav-link">{{ item.label }}</router-link>
+              <a v-else :href="item.href" class="footer-nav-link">{{ item.label }}</a>
             </template>
           </nav>
         </div>
@@ -58,15 +61,17 @@
 
   const isHome = computed(() => route.name === 'WebHome')
 
-  /** 页脚右侧导航（先写死，后续可接 CMS / 路由） */
-  const footerNavLinks = [
-    { label: '公司简介', href: '#' },
-    { label: '联系方式', href: '#' },
-    { label: '合作代理', href: '#' },
-    { label: '隐私政策', href: '#' },
-    { label: '使用协议', href: '#' },
-    { label: '意见反馈', href: '#' }
-  ]
+  const footerNavLinks = computed(() => {
+    const contact = { label: '联系方式', route: { name: 'WebContact' } }
+    const rest = [
+      { label: '公司简介', href: '#' },
+      { label: '合作代理', href: '#' },
+      { label: '隐私政策', href: '#' },
+      { label: '使用协议', href: '#' },
+      { label: '意见反馈', href: '#' }
+    ]
+    return [contact, ...rest]
+  })
 </script>
 
 <style scoped>

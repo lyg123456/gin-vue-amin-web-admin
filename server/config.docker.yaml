@@ -280,3 +280,33 @@ mcp:
     version: v1.0.0
     addr: 8889
     separate: false
+baidu-wenxin:
+    v2-api-key: ""
+    v2-chat-url: "https://qianfan.baidubce.com/v2/chat/completions"
+    v2-model: "ernie-speed-128k"
+    api-key: ""
+    secret-key: ""
+    model-endpoint: "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/ernie-speed-128k"
+    timeout: 120
+volc-ark-video:
+    api-key: ""
+    base-url: ""
+    model: ""
+    timeout: 300
+dashscope-video:
+    api-key: ""
+    synthesis-url: "https://dashscope.aliyuncs.com/api/v1/services/aigc/video-generation/video-synthesis"
+    task-url: "https://dashscope.aliyuncs.com/api/v1/tasks"
+    model: "wan2.7-i2v-2026-04-25"
+    t2v-model: "wanx2.1-t2v-turbo"
+    resolution: "720P"
+    watermark: true
+    timeout: 600
+    poll-interval-sec: 5
+    public-file-base-url: ""
+volc-ark:
+    api-key: ""
+    chat-url: "https://ark.cn-beijing.volces.com/api/v3/chat/completions"
+    # 必填：推理接入点 Endpoint ID（ep- 开头）
+    model: ""
+    timeout: 120

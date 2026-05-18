@@ -35,6 +35,24 @@ function buildRoutes() {
             component: () => import('@/view/portal/ArticleDetail.vue')
           },
           {
+            path: 'short-videos',
+            name: 'WebShortVideoList',
+            meta: { title: '短视频', client: true },
+            component: () => import('@/view/portal/ShortVideoList.vue')
+          },
+          {
+            path: 'short-video/:slug',
+            name: 'WebShortVideo',
+            meta: { title: '短视频详情', client: true },
+            component: () => import('@/view/portal/ShortVideoDetail.vue')
+          },
+          {
+            path: 'contact',
+            name: 'WebContact',
+            meta: { title: '联系方式', client: true },
+            component: () => import('@/view/portal/Contact.vue')
+          },
+          {
             path: 'profile',
             redirect: { name: 'WebMember' }
           },

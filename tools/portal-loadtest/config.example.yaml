@@ -1,8 +1,14 @@
 # 门户 HTTP 压测 — 示例配置（复制为 config.yaml 后修改）
 # 警告：仅对您拥有或已书面授权的系统使用。
 
-# 非活跃时段：每间隔多久发 1 次 HTTP（默认 1h）；若距下一活跃时段不足该间隔，会提前醒来
-idle_interval: 1h
+# 非活跃时段：两次「单请求心跳」间隔（默认 5m）；距下一高峰不足该间隔时会提前醒来
+idle_interval: 5m
+
+# 高峰时段内：至少隔多久打一条汇总日志（默认 30s）；写 0s 表示每秒都打（调试用）
+peak_log_interval: 30s
+
+# true：永不跑高峰压测，只按 idle_interval 发心跳（与是否在 windows 内无关）
+peak_disabled: false
 
 # 目标根 URL（HTTP 不会发送 # 锚点，门户首页请写 /web/ 路径）
 target: "http://106.12.210.3/web/"

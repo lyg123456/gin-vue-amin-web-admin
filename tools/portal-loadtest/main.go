@@ -30,8 +30,12 @@ type Config struct {
 	Concurrency    int      `yaml:"concurrency"`
 	RequestTimeout string   `yaml:"request_timeout"`
 	ExtraPaths     []string `yaml:"extra_paths"`
-	// IdleInterval 非活跃时段：两次「单请求心跳」之间的间隔，默认 1h
+	// IdleInterval 非活跃时段：两次「单请求心跳」之间的间隔，默认 5m
 	IdleInterval string `yaml:"idle_interval"`
+	// PeakLogInterval 高峰时段内，至少隔多久打一条汇总日志（避免每秒刷屏）；0 表示每秒都打
+	PeakLogInterval string `yaml:"peak_log_interval"`
+	// PeakDisabled 为 true 时永不跑高峰压测，只按 idle_interval 发心跳（与 windows 无关）
+	PeakDisabled bool `yaml:"peak_disabled"`
 }
 
 type Window struct {
@@ -70,6 +74,8 @@ func main() {
 	if err != nil || base.Scheme == "" || base.Host == "" {
 		log.Fatalf("invalid target URL")
 	}
+	// HTTP 不会发送 # 片段；去掉以免日志里看起来像压了 SPA 路由
+	base.Fragment = ""
 
 	paths := []string{"/"}
 	if len(cfg.ExtraPaths) > 0 {
@@ -88,42 +94,87 @@ func main() {
 	client := newHTTPClient(cfg.Concurrency, timeout)
 
 	idleEvery, err := time.ParseDuration(strings.TrimSpace(cfg.IdleInterval))
-	if err != nil || idleEvery < time.Minute {
-		idleEvery = time.Hour
+	if err != nil || idleEvery < 30*time.Second {
+		idleEvery = 5 * time.Minute
 	}
 
-	log.Printf("portal-loadtest: target=%s urls=%v qps=[%d,%d] concurrency=%d tz=%s idle_ping=%v",
-		base.String(), urls, cfg.QPSMin, cfg.QPSMax, cfg.Concurrency, cfg.Timezone, idleEvery)
+	peakLogEvery, err := time.ParseDuration(strings.TrimSpace(cfg.PeakLogInterval))
+	if err != nil {
+		peakLogEvery = 30 * time.Second
+	}
+	if peakLogEvery < 0 {
+		peakLogEvery = 30 * time.Second
+	}
+	// peakLogEvery == 0：高峰时仍每秒压测，但每秒都打日志（刷屏）
+
+	now0 := time.Now().In(loc)
+	inWin := inAnyWindow(now0, loc, cfg.Windows) && !cfg.PeakDisabled
+	log.Printf("portal-loadtest: target=%s urls=%v tz=%s now=%s peak_active=%v idle_ping_interval=%v peak_disabled=%v",
+		base.String(), urls, cfg.Timezone, now0.Format("15:04:05"), inWin, idleEvery, cfg.PeakDisabled)
+	if cfg.PeakDisabled {
+		log.Printf("heartbeat-only: 每 %v 发 1 次 HTTP（已关闭高峰压测 peak_disabled=true）", idleEvery)
+	} else if inWin {
+		log.Printf("peak mode: qps=[%d,%d] concurrency=%d (每秒一轮高并发；日志间隔=%v，非「每分钟一次」)",
+			cfg.QPSMin, cfg.QPSMax, cfg.Concurrency, peakLogEvery)
+	} else {
+		log.Printf("idle mode: 每 %v 发 1 次 HTTP；高峰窗口见配置 windows", idleEvery)
+	}
+
 	if *once {
 		runBurst(context.Background(), client, urls, &cfg, 30*time.Second)
 		return
 	}
 
+	var peakSumOk, peakSumErr int64
+	peakWindowStart := time.Now()
+
 	for {
 		now := time.Now().In(loc)
-		if !inAnyWindow(now, loc, cfg.Windows) {
-			nxt := nextWindowStart(now, loc, cfg.Windows)
-			if nxt.IsZero() {
-				log.Fatal("no windows configured")
-			}
+		activeBurst := inAnyWindow(now, loc, cfg.Windows) && !cfg.PeakDisabled
+		if !activeBurst {
+			peakSumOk, peakSumErr = 0, 0
+			peakWindowStart = time.Now()
 			doIdlePing(context.Background(), client, urls)
 			sleep := idleEvery
-			if until := time.Until(nxt); until < sleep {
-				sleep = until
+			if !cfg.PeakDisabled {
+				nxt := nextWindowStart(now, loc, cfg.Windows)
+				if nxt.IsZero() {
+					log.Fatal("no windows configured")
+				}
+				if until := time.Until(nxt); until < sleep {
+					sleep = until
+				}
+				if sleep < time.Second {
+					sleep = time.Second
+				}
+				log.Printf("outside peak windows: idle ping done, sleep %v (next window at %s)",
+					sleep.Round(time.Second), nxt.Format(time.RFC3339))
+			} else {
+				if sleep < time.Second {
+					sleep = time.Second
+				}
+				log.Printf("heartbeat-only: ping done, sleep %v", sleep.Round(time.Second))
 			}
-			if sleep < time.Second {
-				sleep = time.Second
-			}
-			log.Printf("outside active windows: idle ping done, sleep %v (next window at %s)",
-				sleep.Round(time.Second), nxt.Format(time.RFC3339))
 			time.Sleep(sleep)
 			continue
 		}
 
-		// 每秒换一档随机 QPS
+		// 高峰：每秒换一档随机 QPS（仅在 windows 内）
 		secStart := time.Now()
 		qps := randInt(cfg.QPSMin, cfg.QPSMax+1)
-		runOneSecond(context.Background(), client, urls, cfg.Concurrency, qps)
+		ok, errc := runOneSecond(context.Background(), client, urls, cfg.Concurrency, qps)
+		peakSumOk += ok
+		peakSumErr += errc
+		if peakLogEvery <= 0 {
+			if ok+errc > 0 {
+				log.Printf("peak 1s: qps_target=%d ok=%d err_or_4xx=%d", qps, ok, errc)
+			}
+		} else if time.Since(peakWindowStart) >= peakLogEvery {
+			log.Printf("peak summary (~%v): ok=%d err_or_4xx=%d (last_sec qps=%d)",
+				peakLogEvery.Round(time.Second), peakSumOk, peakSumErr, qps)
+			peakSumOk, peakSumErr = 0, 0
+			peakWindowStart = time.Now()
+		}
 		elapsed := time.Since(secStart)
 		if elapsed < time.Second {
 			time.Sleep(time.Second - elapsed)
@@ -159,7 +210,10 @@ func validate(c *Config) error {
 		c.RequestTimeout = "8s"
 	}
 	if strings.TrimSpace(c.IdleInterval) == "" {
-		c.IdleInterval = "1h"
+		c.IdleInterval = "5m"
+	}
+	if strings.TrimSpace(c.PeakLogInterval) == "" {
+		c.PeakLogInterval = "30s"
 	}
 	return nil
 }
@@ -204,14 +258,14 @@ func runBurst(ctx context.Context, client *http.Client, urls []string, cfg *Conf
 	for time.Now().Before(deadline) {
 		qps := randInt(cfg.QPSMin, cfg.QPSMax+1)
 		sub, cancel := context.WithTimeout(ctx, time.Second)
-		runOneSecond(sub, client, urls, cfg.Concurrency, qps)
+		_, _ = runOneSecond(sub, client, urls, cfg.Concurrency, qps)
 		cancel()
 	}
 	log.Printf("-once mode: done")
 }
 
-func runOneSecond(ctx context.Context, client *http.Client, urls []string, workers int, qps int) {
-	var okCount, errCount int64
+func runOneSecond(ctx context.Context, client *http.Client, urls []string, workers int, qps int) (okCount int64, errCount int64) {
+	var okAtomic, errAtomic int64
 	limit := rate.Limit(float64(qps))
 	burst := qps / 10
 	if burst < 50 {
@@ -240,29 +294,27 @@ func runOneSecond(ctx context.Context, client *http.Client, urls []string, worke
 				u := urls[randInt(0, len(urls))]
 				req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
 				if err != nil {
-					atomic.AddInt64(&errCount, 1)
+					atomic.AddInt64(&errAtomic, 1)
 					continue
 				}
 				req.Header.Set("User-Agent", "portal-loadtest/1.0 (+https://github.com/flipped-aurora/gin-vue-admin)")
 				resp, err := client.Do(req)
 				if err != nil {
-					atomic.AddInt64(&errCount, 1)
+					atomic.AddInt64(&errAtomic, 1)
 					continue
 				}
 				_, _ = io.Copy(io.Discard, resp.Body)
 				_ = resp.Body.Close()
 				if resp.StatusCode >= 200 && resp.StatusCode < 400 {
-					atomic.AddInt64(&okCount, 1)
+					atomic.AddInt64(&okAtomic, 1)
 				} else {
-					atomic.AddInt64(&errCount, 1)
+					atomic.AddInt64(&errAtomic, 1)
 				}
 			}
 		}()
 	}
 	wg.Wait()
-	if okCount+errCount > 0 {
-		log.Printf("1s tick: qps_target=%d ok=%d err_or_4xx=%d", qps, okCount, errCount)
-	}
+	return atomic.LoadInt64(&okAtomic), atomic.LoadInt64(&errAtomic)
 }
 
 func minuteOfDay(t time.Time) int {

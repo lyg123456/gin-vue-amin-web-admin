@@ -1,5 +1,23 @@
 <template>
   <div class="portal-home">
+    <portal-pricing-tiers />
+
+    <section class="portal-panel short-video-home" aria-label="短视频">
+      <div class="sv-home-head">
+        <h2 class="sv-home-title">短视频获客</h2>
+        <router-link :to="{ name: 'WebShortVideoList' }" class="sv-home-more">查看更多 →</router-link>
+      </div>
+      <el-skeleton v-if="svLoading" :rows="3" animated />
+      <el-empty v-else-if="!shortVideos.length" description="暂无已发布短视频" />
+      <ul v-else class="sv-home-list">
+        <li v-for="item in shortVideos" :key="item.ID" class="sv-home-row" @click="goShortVideo(item.slug)">
+          <span class="d-bullet" aria-hidden="true" />
+          <span class="d-link">{{ item.title }}</span>
+          <span class="sv-dur">{{ item.durationSec || 0 }}s</span>
+          <time class="d-date">{{ formatMonthDay(item.publishedAt || item.UpdatedAt) }}</time>
+        </li>
+      </ul>
+    </section>
     <section class="portal-panel">
     <p class="intro">以下为管理端「内容 → 文章」中已发布内容，无需登录。</p>
 
@@ -43,12 +61,30 @@
       />
     </div>
     </section>
+
+
+    <section class="home-contact-strip" aria-label="联系方式">
+      <div class="home-contact-inner">
+        <div class="home-contact-text">
+          <span class="home-contact-name">清风</span>
+          <span class="home-contact-phone">19225501831</span>
+          <router-link class="home-contact-more" :to="{ name: 'WebContact' }">更多联系方式</router-link>
+        </div>
+        <div class="home-contact-qr">
+          <span class="home-contact-wechat-label">微信</span>
+          <img src="/portal/wechat-qingfeng.png" alt="微信二维码 — 清风" width="88" height="88" />
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
 <script setup>
-  import { computed, onMounted } from 'vue'
+  import { computed, onMounted, ref } from 'vue'
+  import { useRouter } from 'vue-router'
   import { usePublicArticleList } from '@/view/portal/composables/usePublicArticleList'
+  import PortalPricingTiers from '@/view/portal/components/PortalPricingTiers.vue'
+  import { getPublishedShortVideos } from '@/api/contentShortVideo'
 
   const colTitles = ['新闻动态', '程序发布', '文档教程']
 
@@ -84,7 +120,30 @@
     return `${m}-${day}`
   }
 
-  onMounted(load)
+  const router = useRouter()
+  const shortVideos = ref([])
+  const svLoading = ref(true)
+
+  const loadShortVideos = async () => {
+    svLoading.value = true
+    try {
+      const res = await getPublishedShortVideos({ page: 1, pageSize: 8 })
+      if (res.code === 0) {
+        shortVideos.value = res.data?.list || []
+      }
+    } finally {
+      svLoading.value = false
+    }
+  }
+
+  const goShortVideo = (slug) => {
+    router.push({ name: 'WebShortVideo', params: { slug } })
+  }
+
+  onMounted(() => {
+    load()
+    loadShortVideos()
+  })
 </script>
 
 <style scoped>
@@ -206,6 +265,119 @@
     margin-top: 28px;
     display: flex;
     justify-content: center;
+  }
+
+  .short-video-home {
+    margin-top: 0;
+  }
+  .sv-home-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .sv-home-title {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--portal-text, #303133);
+  }
+  .sv-home-more {
+    font-size: 14px;
+    color: var(--el-color-primary);
+    text-decoration: none;
+  }
+  .sv-home-more:hover {
+    text-decoration: underline;
+  }
+  .sv-home-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .sv-home-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    gap: 10px 12px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--portal-border, #ebeef5);
+    cursor: pointer;
+  }
+  .sv-home-row:last-child {
+    border-bottom: none;
+  }
+  .sv-home-row:hover .d-link {
+    color: var(--el-color-primary);
+  }
+  .sv-dur {
+    font-size: 12px;
+    color: #909399;
+  }
+  .home-contact-strip {
+    margin-top: 4px;
+    background: var(--portal-panel-bg, #ffffff);
+    border-radius: var(--portal-radius, 12px);
+    padding: 16px 20px;
+    box-sizing: border-box;
+  }
+
+  .home-contact-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .home-contact-text {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.95rem;
+    color: var(--portal-text-body, #4b5563);
+  }
+
+  .home-contact-name {
+    font-weight: 700;
+    color: #1a1a1a;
+    font-size: 1rem;
+  }
+
+  .home-contact-phone {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+  }
+
+  .home-contact-more {
+    margin-top: 4px;
+    font-size: 0.85rem;
+    color: var(--portal-link, #2563eb);
+    text-decoration: none;
+  }
+
+  .home-contact-more:hover {
+    text-decoration: underline;
+  }
+
+  .home-contact-qr {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .home-contact-wechat-label {
+    font-size: 0.85rem;
+    color: var(--portal-text-secondary, #6b7280);
+  }
+
+  .home-contact-qr img {
+    width: 88px;
+    height: 88px;
+    object-fit: contain;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.08);
   }
 
   @media (max-width: 960px) {

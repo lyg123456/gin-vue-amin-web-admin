@@ -37,4 +37,13 @@ type Server struct {
 
 	// MCP配置
 	MCP MCP `mapstructure:"mcp" json:"mcp" yaml:"mcp"`
+
+	// 百度文心（千帆）— 后台 AI 写文章等
+	BaiduWenxin BaiduWenxin `mapstructure:"baidu-wenxin" json:"baidu-wenxin" yaml:"baidu-wenxin"`
+	// 火山方舟（豆包）— 配置 api-key 时优先于百度用于 AI 写文章
+	VolcArk VolcArk `mapstructure:"volc-ark" json:"volc-ark" yaml:"volc-ark"`
+	// 火山方舟短视频成片（可选，未配置时仅生成脚本，需手动上传成片）
+	VolcArkVideo VolcArkVideo `mapstructure:"volc-ark-video" json:"volc-ark-video" yaml:"volc-ark-video"`
+	// 阿里云 DashScope 短视频成片（video-synthesis 异步 API）
+	DashScopeVideo DashScopeVideo `mapstructure:"dashscope-video" json:"dashscope-video" yaml:"dashscope-video"`
 }

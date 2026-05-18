@@ -12,7 +12,9 @@
         <router-link class="more-link" to="/">前往首页 · 搜索与浏览全部</router-link>
       </div>
     </section>
-
+    
+     
+<!-- 
     <section class="panel">
       <h1>会员中心</h1>
       <p class="hint">浏览文章无需登录；登录后可使用后续会员功能（收藏、评论等可对接扩展）。</p>
@@ -36,16 +38,9 @@
           <el-button @click="router.push({ name: 'WebMemberRegister' })">注册说明</el-button>
         </div>
       </div>
-    </section>
+    </section> -->
 
-    <section class="panel muted-panel">
-      <h2>使用说明</h2>
-      <ul>
-        <li>会员登录与<strong>站点账号</strong>一致，用于访问需要登录的前台能力；与「管理后台」入口分离。</li>
-        <li>需要进入 <strong>Gin-Vue-Admin 管理后台</strong> 时，请使用顶栏「管理员入口」。</li>
-        <li>本页上方已列出<strong>已发布文章</strong>；更多检索与分页请见<router-link to="/">首页</router-link>。</li>
-      </ul>
-    </section>
+    
   </div>
 </template>
 

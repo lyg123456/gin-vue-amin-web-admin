@@ -48,6 +48,25 @@ export const publishContentArticle = (data) => {
   })
 }
 
+/** 百度文心：根据标题/关键词生成 Markdown 正文（服务端读 AK/SK） */
+export const generateArticleByBaidu = (data) => {
+  return service({
+    url: '/contentArticle/generateArticleByBaidu',
+    method: 'post',
+    data,
+    timeout: 600000
+  })
+}
+
+/** 诊断：配置 → token → 最小对话（用于定位错误 6 等） */
+export const diagnoseBaiduWenxin = () => {
+  return service({
+    url: '/contentArticle/diagnoseBaiduWenxin',
+    method: 'get',
+    timeout: 120000
+  })
+}
+
 // public: SEO 公开访问（不需要 token，仍然走同一个 baseURL）
 export const getPublishedArticleBySlug = (slug) => {
   return service({

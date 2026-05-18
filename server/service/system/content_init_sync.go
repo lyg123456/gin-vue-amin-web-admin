@@ -8,6 +8,9 @@ import (
 type ContentInitService struct{}
 
 func (s *ContentInitService) Sync() error {
-	return contentSource.SyncContentInit(global.GVA_DB)
+	if err := contentSource.SyncContentInit(global.GVA_DB); err != nil {
+		return err
+	}
+	return contentSource.SyncShortVideoInit(global.GVA_DB)
 }
 

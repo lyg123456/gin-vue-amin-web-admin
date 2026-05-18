@@ -13,6 +13,8 @@ func (r *ArticleRouter) InitContentArticleRouter(private *gin.RouterGroup, publi
 		articlePrivate.GET("findArticle", articleApi.FindArticle)
 		articlePrivate.GET("getArticleList", articleApi.GetArticleList)
 		articlePrivate.POST("publishArticle", articleApi.PublishArticle)
+		articlePrivate.POST("generateArticleByBaidu", articleApi.GenerateArticleByBaidu)
+		articlePrivate.GET("diagnoseBaiduWenxin", articleApi.DiagnoseBaiduWenxin)
 	}
 
 	catPrivate := private.Group("contentArticleCategory")
@@ -34,6 +36,12 @@ func (r *ArticleRouter) InitContentArticleRouter(private *gin.RouterGroup, publi
 		articlePublic.GET("web/stats", articleApi.CountWebView)          // 统计+返回
 		articlePublic.GET("web/stats/info", articleApi.GetWebViewCount) // 仅查询
 		articlePublic.GET("homeCarousel", articleApi.GetHomeCarousel)   // 门户首页轮播
+		articlePublic.POST("portalContactLead", portalContactLeadApi.Submit) // 门户留资提交
+	}
+
+	leadPrivate := private.Group("contentPortalContactLead")
+	{
+		leadPrivate.GET("getPortalContactLeadList", portalContactLeadApi.GetList)
 	}
 }
 

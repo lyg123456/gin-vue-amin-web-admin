@@ -177,7 +177,7 @@
 </template>
 
 <script setup>
-  import { computed, ref } from 'vue'
+  import { computed, nextTick, onMounted, ref } from 'vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import { formatDate } from '@/utils/format'
   import SelectImage from '@/components/selectImage/selectImage.vue'
@@ -196,10 +196,13 @@
     updateContentArticleCategory,
     deleteContentArticleCategory
   } from '@/api/contentArticleCategory'
+  import { parseAiArticleOutput, buildSummaryFromMarkdown } from '@/utils/parseAiArticleOutput'
 
   defineOptions({
     name: 'ContentArticle'
   })
+
+  const AI_PREFILL_KEY = 'GVA_CONTENT_ARTICLE_AI_PREFILL'
 
   const keyword = ref('')
   const status = ref('')
@@ -399,6 +402,60 @@
     drawerVisible.value = true
   }
 
+  const tryConsumeAiPrefill = () => {
+    try {
+      const raw = sessionStorage.getItem(AI_PREFILL_KEY)
+      if (!raw) return
+      sessionStorage.removeItem(AI_PREFILL_KEY)
+      const data = JSON.parse(raw)
+      if (!data || typeof data !== 'object') return
+      drawerType.value = 'create'
+      const title = String(data.title || '').slice(0, 200)
+      let slug = String(data.slug || '').trim().slice(0, 200)
+      if (!slug) {
+        slug = title
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '')
+          .slice(0, 120)
+      }
+      if (!slug) slug = `article-${Date.now()}`
+
+      const rawContent = String(data.content || '')
+      const parsed = parseAiArticleOutput(rawContent)
+      const content = parsed.content || rawContent
+      const summary = (
+        String(data.summary || '').trim() ||
+        parsed.summary ||
+        buildSummaryFromMarkdown(content)
+      ).slice(0, 500)
+      const seoDescription = (String(data.seoDescription || '').trim() || parsed.seoDescription).slice(0, 500)
+      const seoKeywords = (String(data.seoKeywords || '').trim() || parsed.seoKeywords).slice(0, 500)
+
+      form.value = {
+        ...emptyForm(),
+        title,
+        slug,
+        summary,
+        content,
+        seoTitle: String(data.seoTitle || data.title || title).slice(0, 200),
+        seoKeywords,
+        seoDescription,
+        categoryId: Number(data.categoryId) > 0 ? Number(data.categoryId) : 0
+      }
+      galleryUrls.value = parseCoverToGallery(String(data.coverImage || ''))
+      syncCategoryPickFromForm()
+      drawerVisible.value = true
+      ElMessage.success('已从 AI 写文章带入各字段，请检查后保存')
+    } catch {
+      /* ignore */
+    }
+  }
+
+  onMounted(() => {
+    tryConsumeAiPrefill()
+  })
+
   const closeDrawer = () => {
     drawerVisible.value = false
     form.value = emptyForm()
@@ -410,16 +467,38 @@
     const res = await findContentArticle({ id: row.ID })
     if (res.code === 0) {
       drawerType.value = 'update'
-      form.value = res.data
-      galleryUrls.value = parseCoverToGallery(res.data.coverImage)
+      const d = res.data
+      form.value = { ...d }
+      delete form.value.category
+      if (!form.value.categoryId && d.category?.ID) {
+        form.value.categoryId = d.category.ID
+      }
+      galleryUrls.value = parseCoverToGallery(d.coverImage)
+      await nextTick()
       syncCategoryPickFromForm()
       drawerVisible.value = true
     }
   }
 
-  const submitDrawer = async () => {
+  const buildArticlePayload = () => {
     const urls = Array.isArray(galleryUrls.value) ? galleryUrls.value.slice(0, 6) : []
-    const payload = { ...form.value, coverImage: urls.join(',') }
+    const raw = form.value
+    // 去掉嵌套 category，避免与 categoryId 不一致；分类以级联当前值为准
+    const { category: _omitCategory, ...rest } = raw
+    const pick = categoryPick.value
+    const cid =
+      pick !== undefined && pick !== null && pick !== ''
+        ? Number(pick)
+        : Number(raw.categoryId ?? 0) || 0
+    return {
+      ...rest,
+      categoryId: Number.isFinite(cid) && cid > 0 ? cid : 0,
+      coverImage: urls.join(',')
+    }
+  }
+
+  const submitDrawer = async () => {
+    const payload = buildArticlePayload()
     let res
     if (drawerType.value === 'update') {
       res = await updateContentArticle(payload)

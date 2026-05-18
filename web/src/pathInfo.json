@@ -8,6 +8,7 @@
   "/src/view/dashboard/components/charts.vue": "Charts",
   "/src/view/dashboard/components/notice.vue": "Notice",
   "/src/view/dashboard/components/pluginTable.vue": "PluginTable",
+  "/src/view/dashboard/components/pricing-tiers.vue": "PricingTiers",
   "/src/view/dashboard/components/quickLinks.vue": "QuickLinks",
   "/src/view/dashboard/components/table.vue": "Table",
   "/src/view/dashboard/components/wiki.vue": "Wiki",

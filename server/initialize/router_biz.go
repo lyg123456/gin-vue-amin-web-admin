@@ -20,5 +20,6 @@ func initBizRouter(routers ...*gin.RouterGroup) {
 
 	// 内容发布（文章 + SEO）
 	new(contentRouter.RouterGroup).InitContentArticleRouter(privateGroup, publicGroup)
+	new(contentRouter.RouterGroup).InitContentShortVideoRouter(privateGroup, publicGroup)
 
 }

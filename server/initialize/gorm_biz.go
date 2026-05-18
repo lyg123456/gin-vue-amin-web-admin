@@ -10,9 +10,12 @@ func bizModel() error {
 	err := db.AutoMigrate(
 		&content.ContentArticle{},
 		&content.ContentArticleCategory{},
+		&content.PortalContactLead{},
+		&content.ContentShortVideo{},
 	)
 	if err != nil {
 		return err
 	}
+	ensureBizTablesUTF8MB4(db)
 	return nil
 }

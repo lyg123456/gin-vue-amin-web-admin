@@ -7,6 +7,7 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
 	contentModel "github.com/flipped-aurora/gin-vue-admin/server/model/content"
+	svccontent "github.com/flipped-aurora/gin-vue-admin/server/service/content"
 	"github.com/flipped-aurora/gin-vue-admin/server/utils"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -296,5 +297,53 @@ func (a *ArticleApi) GetPublishedBySlug(c *gin.Context) {
 	}
 	_ = articleService.IncViewBySlug(slug)
 	response.OkWithDetailed(data, "获取成功", c)
+}
+
+type generateArticleByBaiduBody struct {
+	Title            string  `json:"title"`
+	Keywords         string  `json:"keywords"`
+	Rules            string  `json:"rules"`
+	RulesFileContent string  `json:"rulesFileContent"`
+	WordCount        int     `json:"wordCount"`
+	Temperature      float64 `json:"temperature"`
+}
+
+// GenerateArticleByBaidu 生成 Markdown 正文：若配置 volc-ark.api-key 则走火山豆包；否则走百度千帆（V2 或 OAuth）
+func (a *ArticleApi) GenerateArticleByBaidu(c *gin.Context) {
+	var body generateArticleByBaiduBody
+	if err := c.ShouldBindJSON(&body); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	req := svccontent.BaiduGenerateArticleReq{
+		Title:            body.Title,
+		Keywords:         body.Keywords,
+		Rules:            body.Rules,
+		RulesFileContent: body.RulesFileContent,
+		WordCount:        body.WordCount,
+		Temperature:      body.Temperature,
+	}
+	var text string
+	var err error
+	if volcArkArticleService.Enabled() {
+		text, err = volcArkArticleService.GenerateArticle(req)
+	} else {
+		text, err = baiduWenxinArticleService.GenerateArticle(req)
+	}
+	if err != nil {
+		global.GVA_LOG.Warn("AI 生成文章失败", zap.Error(err))
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	response.OkWithDetailed(gin.H{"content": text}, "生成成功", c)
+}
+
+// DiagnoseBaiduWenxin 诊断 AI 写文章链路：优先火山方舟；否则百度（V2 / OAuth）
+func (a *ArticleApi) DiagnoseBaiduWenxin(c *gin.Context) {
+	if volcArkArticleService.Enabled() {
+		response.OkWithDetailed(volcArkArticleService.Diagnose(), "诊断完成", c)
+		return
+	}
+	response.OkWithDetailed(baiduWenxinArticleService.Diagnose(), "诊断完成", c)
 }
 

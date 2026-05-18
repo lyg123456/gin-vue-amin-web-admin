@@ -22,6 +22,8 @@ func (s *ArticleService) CreateArticle(article *contentModel.ContentArticle) err
 	if err := articleCategoryService.ValidateCategoryIDForArticle(article.CategoryID); err != nil {
 		return err
 	}
+	// 避免 JSON 里嵌套 category 与 CategoryID 不一致时，关联对象干扰写入
+	article.Category = nil
 	return global.GVA_DB.Create(article).Error
 }
 
@@ -37,6 +39,8 @@ func (s *ArticleService) UpdateArticle(article *contentModel.ContentArticle) err
 	if err := articleCategoryService.ValidateCategoryIDForArticle(article.CategoryID); err != nil {
 		return err
 	}
+	// 更新时清空 Preload 出来的关联，否则 Save 可能按旧关联覆盖 category_id
+	article.Category = nil
 	return global.GVA_DB.Save(article).Error
 }
 

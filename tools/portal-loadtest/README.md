@@ -10,8 +10,10 @@
 
 ## 功能说明
 
-- 在**非活跃时段**：先发 **1 次** HTTP（心跳），再睡眠 **`idle_interval`**（默认 1 小时）；若下一活跃时段早于该间隔结束，会**提前醒来**进入高峰压测，避免睡过头。
-- 在活跃时段内，**每秒**在 `[qps_min, qps_max]` 随机一个目标 QPS，使用令牌桶 + 工作协程池尽量逼近该速率发 HTTP GET。
+- **高峰时段**（`windows` 内）：**每秒**一轮 `[qps_min, qps_max]` 随机 QPS 压测（这是日志里 `peak 1s` / `peak summary` 的来源，**不是**「每分钟一次」）。
+- **非高峰**：发 **1 次** HTTP 心跳，再睡 **`idle_interval`**（默认 **5 分钟**）；若下一高峰更早到来会提前醒来。
+- 日志：`peak_log_interval`（默认 **30s**）内汇总一行，避免每秒刷屏；设为 **`0s`** 则恢复每秒详细日志。
+- 若你在 **09:00–12:00** 等窗口内运行，会一直走**高峰模式**；若只想**每 5 分钟发 1 次**请求、不要高峰，请在配置里设 **`peak_disabled: true`**（与 `windows` 无关，始终心跳）。
 - 默认请求 `target` 与 `extra_paths`（均会 `Join` 到 `target` 上）。
 
 ## 运行方式
@@ -36,7 +38,9 @@ go run . -config config.yaml
 
 见 `config.example.yaml`。注意：
 
-- **`idle_interval`**：非活跃时段两次「单请求心跳」之间的间隔（默认 `1h`）；下一活跃时段若更早到达，会缩短本次 sleep。
+- **`idle_interval`**：非高峰 / 心跳模式下两次请求间隔（默认 **`5m`**）；下一高峰若更早到达且未设 `peak_disabled`，会缩短本次 sleep。
+- **`peak_disabled: true`**：永不跑高峰，只按 `idle_interval` 发心跳。
+- **`peak_log_interval`**：高峰时汇总日志间隔（默认 `30s`）；`0s` 为每秒详细日志。
 - 浏览器地址里的 `#/...` **不会**发给服务器；压静态入口请写 **`http://host/web/`** 这类真实 HTTP 路径。
 - `concurrency` 过低时实际 QPS 会低于目标；过高可能触发本机 `ulimit` 限制，需自行调优。
 

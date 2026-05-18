@@ -254,3 +254,39 @@ zap:
     show-line: true
     log-in-console: true
     retention-day: -1
+baidu-wenxin:
+    # 推荐：千帆 V2 OpenAPI（与官方 curl 一致）https://qianfan.baidubce.com/v2/chat/completions
+    v2-api-key: "" # 控制台「API Key」，请求头 Authorization: Bearer；填写后优先走 V2，不再使用下方 OAuth
+    v2-chat-url: "https://qianfan.baidubce.com/v2/chat/completions"
+    v2-model: "ernie-speed-128k"
+    # 旧版（仅当 v2-api-key 为空）：OAuth + aip.baidubce.com .../wenxinworkshop/chat/服务名
+    # 文档：https://cloud.baidu.com/doc/AI_REFERENCE/s/Km3zhy5t7
+    api-key: ""
+    secret-key: ""
+    model-endpoint: "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/ernie-speed-128k"
+    timeout: 120
+# 火山引擎方舟（豆包）：配置 api-key 后「AI写文章」优先走豆包
+volc-ark:
+    api-key: "ark-736dd5b1-13b0-48ba-8a32-c409764b229f-86e0c" # export ARK_API_KEY="ark-736dd5b1-13b0-48ba-8a32-c409764b229f-86e0c"
+    chat-url: "https://ark.cn-beijing.volces.com/api/v3/chat/completions"
+    # 必填：控制台「推理接入点」的 Endpoint ID（ep- 开头），不要用商品名 Doubao-lite-4k
+    model: "ep-20260516105112-b7mpz"
+    timeout: 120
+# 火山短视频成片 API（后续填写；未配置时仅 AI 脚本 + 手动上传 videoUrl）
+volc-ark-video:
+    api-key: "sk-83ac756d324f4e968b2b04a57282c015"
+    base-url: "https://ark.cn-beijing.volces.com/api/v3"
+    model: ""
+    timeout: 300
+dashscope-video:
+    api-key: "sk-83ac756d324f4e968b2b04a57282c015"
+    synthesis-url: "https://dashscope.aliyuncs.com/api/v1/services/aigc/video-generation/video-synthesis"
+    task-url: "https://dashscope.aliyuncs.com/api/v1/tasks"
+    model: "wan2.7-i2v-2026-04-25"
+    t2v-model: "wanx2.1-t2v-turbo"
+    resolution: "720P"
+    watermark: true
+    timeout: 600
+    poll-interval-sec: 5
+    # 若素材已部署为公网 HTTPS，可填如 https://your-domain.com（相对路径 uploads/file/... 会拼在此后）
+    public-file-base-url: ""
