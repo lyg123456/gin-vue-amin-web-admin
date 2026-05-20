@@ -129,7 +129,15 @@ const IMAGE_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xm
 
 export const isVideoExt = (url) => {
   const urlLower = url?.toLowerCase() || ''
-  return urlLower !== '' && VIDEO_EXTENSIONS.some(ext => urlLower.endsWith(ext))
+  if (!urlLower) return false
+  const path = urlLower.split('?')[0].split('#')[0]
+  return VIDEO_EXTENSIONS.some((ext) => path.endsWith(ext))
+}
+
+/** 短视频/成片播放地址（以后端存的 URL 为准，补全本地相对路径） */
+export const videoPlayUrl = (url) => {
+  const u = String(url || '').trim()
+  return u ? getUrl(u) : ''
 }
 
 export const isVideoMime = (type) => {

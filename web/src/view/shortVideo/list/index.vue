@@ -25,6 +25,12 @@
         </template>
       </el-table-column>
       <el-table-column label="播放" prop="viewCount" width="80" />
+      <el-table-column label="成片" width="88">
+        <template #default="{ row }">
+          <el-tag v-if="row.videoUrl" type="success" size="small">有</el-tag>
+          <el-tag v-else type="info" size="small">无</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="创建时间" width="170">
         <template #default="{ row }">{{ formatDate(row.CreatedAt) }}</template>
       </el-table-column>
@@ -80,8 +86,9 @@
           <el-button :loading="regenVideoLoading" @click="regen(false, true)">重生成成片</el-button>
         </el-form-item>
       </el-form>
-      <div v-if="playUrl" class="player-wrap">
-        <video :src="playUrl" controls class="video-player" />
+      <div v-if="backendPlayUrl" class="player-wrap">
+        <p class="play-label">成片预览</p>
+        <video :key="backendPlayUrl" :src="backendPlayUrl" controls class="video-player" />
       </div>
     </el-drawer>
   </div>
@@ -91,6 +98,7 @@
   import { computed, ref } from 'vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import { formatDate } from '@/utils/format'
+  import { videoPlayUrl } from '@/utils/image'
   import SelectImage from '@/components/selectImage/selectImage.vue'
   import {
     getShortVideoList,
@@ -126,11 +134,21 @@
   const regenVideoLoading = ref(false)
 
   const drawerTitle = computed(() => (detail.value?.title ? `短视频：${detail.value.title}` : '短视频详情'))
-  const playUrl = computed(() => {
-    const v = detailVideo.value
-    if (Array.isArray(v)) return v[0] || ''
-    return v || detail.value?.videoUrl || ''
-  })
+  /** 播放器只读后端 videoUrl，不与 SelectImage 编辑态混用 */
+  const backendPlayUrl = computed(() => videoPlayUrl(detail.value?.videoUrl))
+
+  const syncDetailFromBackend = (data) => {
+    if (!data) return
+    detail.value = { ...data }
+    detailCover.value = data.coverImage || ''
+    detailVideo.value = data.videoUrl || ''
+    const urls = (data.sourceImages || '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)
+    detailFirstFrame.value = data.firstFrameUrl || urls[0] || ''
+    detailLastFrame.value = data.lastFrameUrl || urls[1] || ''
+  }
 
   const statusLabel = (s) =>
     ({
@@ -168,15 +186,7 @@
   const openDetail = async (row) => {
     const res = await findShortVideo({ id: row.ID })
     if (res.code === 0) {
-      detail.value = { ...res.data }
-      detailCover.value = res.data.coverImage || ''
-      detailVideo.value = res.data.videoUrl || ''
-      const urls = (res.data.sourceImages || '')
-        .split(',')
-        .map((s) => s.trim())
-        .filter(Boolean)
-      detailFirstFrame.value = res.data.firstFrameUrl || urls[0] || ''
-      detailLastFrame.value = res.data.lastFrameUrl || urls[1] || ''
+      syncDetailFromBackend(res.data)
       drawerVisible.value = true
     }
   }
@@ -198,8 +208,12 @@
       }
       const res = await updateShortVideo(payload)
       if (res.code === 0) {
+        detail.value = { ...detail.value, ...payload }
+        detailVideo.value = video
         ElMessage.success('已保存')
         load()
+        const fresh = await findShortVideo({ id: detail.value.ID })
+        if (fresh.code === 0) syncDetailFromBackend(fresh.data)
       }
     } finally {
       saving.value = false
@@ -233,7 +247,7 @@
         regenVideo
       })
       if (res.code === 0) {
-        detail.value = res.data
+        syncDetailFromBackend(res.data)
         ElMessage.success('操作成功')
         load()
       }
@@ -266,5 +280,6 @@
 
 <style scoped>
   .player-wrap { margin-top: 16px; }
+  .play-label { font-size: 12px; color: #909399; margin: 0 0 8px; }
   .video-player { width: 100%; max-height: 360px; background: #000; border-radius: 8px; }
 </style>

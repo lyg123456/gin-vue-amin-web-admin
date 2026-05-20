@@ -15,7 +15,7 @@
       </div>
       <p v-if="video.description" class="desc">{{ video.description }}</p>
       <div v-if="playUrl" class="player-box">
-        <video :src="playUrl" controls playsinline class="player" />
+        <video :key="playUrl" :src="playUrl" controls playsinline class="player" />
       </div>
       <div v-if="scriptHtml" class="script-box">
         <h2>脚本 / 文案</h2>
@@ -30,7 +30,7 @@
   import { useRoute } from 'vue-router'
   import { getPublishedShortVideoBySlug } from '@/api/contentShortVideo'
   import { formatDate } from '@/utils/format'
-  import { getUrl } from '@/utils/image'
+  import { videoPlayUrl } from '@/utils/image'
   import { Marked } from 'marked'
 
   const route = useRoute()
@@ -38,10 +38,7 @@
   const loading = ref(true)
   const marked = new Marked()
 
-  const playUrl = computed(() => {
-    const u = video.value?.videoUrl
-    return u ? getUrl(u) : ''
-  })
+  const playUrl = computed(() => videoPlayUrl(video.value?.videoUrl))
 
   const scriptHtml = computed(() => {
     const s = video.value?.script
