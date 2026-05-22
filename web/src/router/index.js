@@ -1,15 +1,16 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 
 /**
- * 与部署路径一致：管理端 /admin/ ，用户端 /web/
- * 例：http://127.0.0.1:8080/admin/#/login 、http://127.0.0.1:8080/web/#/login
+ * 与部署路径一致：根路径 / 与用户端 /web/ → 门户；管理端 /admin/
+ * 例：http://host/web/#/ 、http://host/admin/#/login
  */
 export function getHistoryBase() {
-  if (typeof window === 'undefined') return '/admin/'
+  if (typeof window === 'undefined') return '/web/'
   const p = window.location.pathname || ''
-  if (p === '/web' || p.startsWith('/web/')) return '/web/'
   if (p === '/admin' || p.startsWith('/admin/')) return '/admin/'
-  return '/admin/'
+  if (p === '/web' || p.startsWith('/web/')) return '/web/'
+  // 根路径 / 等未带前缀的访问 → 用户端门户（与 Nginx 将 / 重定向到 /web/ 一致）
+  return '/web/'
 }
 
 function buildRoutes() {
@@ -41,6 +42,12 @@ function buildRoutes() {
             component: () => import('@/view/portal/ShortVideoList.vue')
           },
           {
+            path: 'color-blindness',
+            name: 'WebColorBlindness',
+            meta: { title: '色盲色弱', client: true },
+            component: () => import('@/view/portal/ColorBlindness.vue')
+          },
+          {
             path: 'short-video/:slug',
             name: 'WebShortVideo',
             meta: { title: '短视频详情', client: true },
@@ -51,6 +58,12 @@ function buildRoutes() {
             name: 'WebContact',
             meta: { title: '联系方式', client: true },
             component: () => import('@/view/portal/Contact.vue')
+          },
+          {
+            path: 'office-tools',
+            name: 'WebOfficeTools',
+            meta: { title: '办公工具', client: true },
+            component: () => import('@/view/portal/OfficeTools.vue')
           },
           {
             path: 'profile',

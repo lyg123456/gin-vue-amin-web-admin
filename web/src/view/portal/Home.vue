@@ -156,15 +156,15 @@
 
   .portal-panel {
     background: var(--portal-panel-bg, #ffffff);
-    border-radius: var(--portal-radius, 12px);
-    border: none;
-    padding: 24px;
+    border-radius: var(--portal-radius, 4px);
+    border: 1px solid #e0e0e0;
+    padding: 16px;
   }
 
   .intro {
     margin: 0 0 16px;
-    font-size: 0.9rem;
-    color: var(--portal-text-secondary, #6b7280);
+    font-size: 14px;
+    color: var(--portal-text-secondary, #666);
     line-height: 1.5;
   }
 
@@ -209,9 +209,9 @@
     margin: 0;
     padding: 14px 16px 10px;
     text-align: center;
-    font-size: 1.05rem;
+    font-size: 16px;
     font-weight: 700;
-    color: #1a1a1a;
+    color: #333;
     letter-spacing: 0.02em;
   }
 
@@ -234,8 +234,8 @@
     padding: 8px 6px;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 0.875rem;
-    color: var(--portal-text-body, #4b5563);
+    font-size: 14px;
+    color: var(--portal-text-body, #444);
   }
 
   .d-bullet {
@@ -256,8 +256,8 @@
 
   .d-date {
     flex-shrink: 0;
-    font-size: 0.78rem;
-    color: var(--portal-text-meta, #9ca3af);
+    font-size: 13px;
+    color: var(--portal-text-meta, #888);
     font-variant-numeric: tabular-nums;
   }
 

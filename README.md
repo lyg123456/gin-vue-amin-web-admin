@@ -387,3 +387,47 @@ fmt.Println(decodeBytes, err)
 
 请严格遵守Apache 2.0协议并保留作品声明，去除版权信息请务必[获取授权](https://plugin.gin-vue-admin.com/license)  
 未授权去除版权信息将依法追究法律责任
+
+//==============================================
+
+
+实现 短视频异步成片服务（独立包 service/videoasync），架构如下。
+
+架构
+API 入队 → 写 DB 任务表 → Redis RPUSH
+                ↓
+        分发协程 BLPOP → channel（带缓冲）
+                ↓
+        Worker 池（N 个 goroutine）→ DashScope 成片 → 更新 DB
+新增内容
+模块	说明
+service/videoasync
+Redis 队列 + channel + Worker 池
+表 content_video_gen_jobs
+任务状态：queued / processing / succeeded / failed
+config.yaml → video-async
+开关、Worker 数、队列 key 等
+后台 异步成片任务
+短视频列表可进「异步任务队列」页
+配置（server/config.yaml）
+system:
+    use-redis: true          # 异步队列需要 Redis，请改为 true
+video-async:
+    enabled: true            # 开启后「生成成片」只入队，不阻塞 HTTP
+    require-redis: true
+    worker-count: 2
+    queue-key: "gva:video:gen:queue"
+    channel-buffer: 100
+关闭异步：设 video-async.enabled: false，则恢复为请求内同步成片。
+
+使用步骤
+启动 Redis（默认 127.0.0.1:6379）
+system.use-redis: true
+重启后端（启动时自动 VideoAsyncWorker()）
+执行一次 内容获客同步（超级管理员 → 系统配置 →「同步内容获客菜单/权限」，或 POST /contentInit/sync）
+生成成片：接口立即返回「已加入异步生成队列」，后台 Worker 消费
+行为说明
+同一短视频同时只能有 1 个 queued/processing 任务，避免重复提交。
+短视频状态会变为 排队中（queued），Worker 处理后变为 generating / ready / failed。
+后期扩容：可多实例部署，共用同一 Redis 队列；Worker 数用 worker-count 调节。
+若本地暂未装 Redis，可临时设 video-async.require-redis: false（仅用内存 channel，重启后队列丢失，仅适合开发调试）。

@@ -57,7 +57,7 @@ export default ({ mode }) => {
     },
     server: {
       // 如果使用docker-compose开发模式，设置为false
-      open: '/admin/',
+      open: '/web/',
       port: Number(env.VITE_CLI_PORT),
       proxy: {
         // 把key的路径代理到target位置
@@ -115,7 +115,7 @@ export default ({ mode }) => {
               req.method === 'GET' &&
               String(req.headers.accept || '').includes('text/html')
             ) {
-              res.writeHead(302, { Location: '/admin/' })
+              res.writeHead(302, { Location: '/web/' })
               res.end()
               return
             }

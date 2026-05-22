@@ -217,7 +217,11 @@ func (a *ShortVideoApi) CreateShortVideoWithAI(c *gin.Context) {
 			v, _ = shortVideoService.Find(v.ID)
 		}
 	}
-	response.OkWithDetailed(v, "已入库", c)
+	msg := "已入库"
+	if body.AutoGenerate && global.GVA_CONFIG.VideoAsync.Enabled {
+		msg = "已入库，成片任务已加入异步队列"
+	}
+	response.OkWithDetailed(v, msg, c)
 }
 
 func (a *ShortVideoApi) GenerateShortVideo(c *gin.Context) {
@@ -253,7 +257,11 @@ func (a *ShortVideoApi) GenerateShortVideo(c *gin.Context) {
 		return
 	}
 	v, _ := shortVideoService.Find(body.ID)
-	response.OkWithDetailed(v, "已提交生成", c)
+	msg := "已提交生成"
+	if global.GVA_CONFIG.VideoAsync.Enabled {
+		msg = "已加入异步生成队列，请稍后刷新查看状态"
+	}
+	response.OkWithDetailed(v, msg, c)
 }
 
 func (a *ShortVideoApi) RegenerateShortVideo(c *gin.Context) {

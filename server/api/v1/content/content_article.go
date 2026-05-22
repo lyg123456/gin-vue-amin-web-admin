@@ -43,6 +43,10 @@ func (a *ArticleApi) CountWebView(c *gin.Context) {
 	stats.Today++
 	global.GVA_DB.Save(&stats)
 
+	if err := portalVisitorService.RecordVisit(utils.ClientIP(c)); err != nil {
+		global.GVA_LOG.Warn("记录门户访客失败", zap.Error(err))
+	}
+
 	response.OkWithDetailed(gin.H{
 		"total": stats.Total,
 		"today": stats.Today,

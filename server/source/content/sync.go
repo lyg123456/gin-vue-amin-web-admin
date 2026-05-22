@@ -78,6 +78,26 @@ func SyncContentInit(db *gorm.DB) error {
 		}
 	}
 
+	var visitorMenu sysModel.SysBaseMenu
+	if err := db.Where("name = ?", "contentPortalVisitor").First(&visitorMenu).Error; err != nil {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return err
+		}
+		visitorMenu = sysModel.SysBaseMenu{
+			MenuLevel: 1,
+			Hidden:    false,
+			ParentId:  parent.ID,
+			Path:      "visitorStats",
+			Name:      "contentPortalVisitor",
+			Component: "view/content/visitorStats/index.vue",
+			Sort:      4,
+			Meta:      sysModel.Meta{Title: "访客统计", Icon: "data-line"},
+		}
+		if err := db.Create(&visitorMenu).Error; err != nil {
+			return errors.Wrap(err, "创建访客统计子菜单失败")
+		}
+	}
+
 	var aiMenu sysModel.SysBaseMenu
 	if err := db.Where("name = ?", "contentAiArticle").First(&aiMenu).Error; err != nil {
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
@@ -104,7 +124,7 @@ func SyncContentInit(db *gorm.DB) error {
 		if err := db.Where("authority_id = ?", aid).First(&auth).Error; err != nil {
 			continue
 		}
-		if err := db.Model(&auth).Association("SysBaseMenus").Append([]sysModel.SysBaseMenu{parent, articleMenu, leadMenu, aiMenu}); err != nil {
+		if err := db.Model(&auth).Association("SysBaseMenus").Append([]sysModel.SysBaseMenu{parent, articleMenu, leadMenu, visitorMenu, aiMenu}); err != nil {
 			return errors.Wrap(err, "为角色追加内容获客菜单失败")
 		}
 	}
@@ -125,6 +145,8 @@ func SyncContentInit(db *gorm.DB) error {
 		{ApiGroup: "内容获客", Method: "PUT", Path: "/contentArticleCategory/updateCategory", Description: "更新文章分类"},
 		{ApiGroup: "内容获客", Method: "DELETE", Path: "/contentArticleCategory/deleteCategory", Description: "删除文章分类"},
 		{ApiGroup: "内容获客", Method: "GET", Path: "/contentPortalContactLead/getPortalContactLeadList", Description: "访客留资列表"},
+		{ApiGroup: "内容获客", Method: "GET", Path: "/contentPortalVisitor/getPortalVisitorList", Description: "访客统计列表"},
+		{ApiGroup: "内容获客", Method: "GET", Path: "/contentPortalVisitor/getPortalVisitorSummary", Description: "访客统计汇总"},
 		{ApiGroup: "系统初始化", Method: "POST", Path: "/contentInit/sync", Description: "同步内容获客初始化数据"},
 	}
 	for _, api := range apis {
@@ -159,6 +181,8 @@ func SyncContentInit(db *gorm.DB) error {
 		{"PUT", "/contentArticleCategory/updateCategory"},
 		{"DELETE", "/contentArticleCategory/deleteCategory"},
 		{"GET", "/contentPortalContactLead/getPortalContactLeadList"},
+		{"GET", "/contentPortalVisitor/getPortalVisitorList"},
+		{"GET", "/contentPortalVisitor/getPortalVisitorSummary"},
 		{"POST", "/contentInit/sync"},
 	}
 	for _, role := range []string{"888", "8881", "9528"} {

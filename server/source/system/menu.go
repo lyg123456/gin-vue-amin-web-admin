@@ -101,10 +101,12 @@ func (i *initMenu) InitializeData(ctx context.Context) (next context.Context, er
 		// content子菜单
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["content"], Path: "article", Name: "contentArticle", Component: "view/content/article/index.vue", Sort: 1, Meta: Meta{Title: "文章管理", Icon: "document"}},
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["content"], Path: "contactLead", Name: "contentPortalContactLead", Component: "view/content/contactLead/index.vue", Sort: 2, Meta: Meta{Title: "访客留资", Icon: "iphone"}},
+		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["content"], Path: "visitorStats", Name: "contentPortalVisitor", Component: "view/content/visitorStats/index.vue", Sort: 4, Meta: Meta{Title: "访客统计", Icon: "data-line"}},
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["content"], Path: "aiArticle", Name: "contentAiArticle", Component: "view/content/aiArticle/index.vue", Sort: 3, Meta: Meta{Title: "AI写文章", Icon: "edit"}},
 
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["shortVideo"], Path: "aiGenerate", Name: "shortVideoAi", Component: "view/shortVideo/aiGenerate/index.vue", Sort: 1, Meta: Meta{Title: "AI生成短视频", Icon: "magic-stick"}},
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["shortVideo"], Path: "list", Name: "shortVideoList", Component: "view/shortVideo/list/index.vue", Sort: 2, Meta: Meta{Title: "短视频列表", Icon: "list"}},
+		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["shortVideo"], Path: "jobs", Name: "shortVideoGenJobs", Component: "view/shortVideo/jobs/index.vue", Sort: 3, Meta: Meta{Title: "异步成片任务", Icon: "timer"}},
 
 		// systemTools子菜单
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["systemTools"], Path: "autoPkg", Name: "autoPkg", Component: "view/systemTools/autoPkg/autoPkg.vue", Sort: 0, Meta: Meta{Title: "模板配置", Icon: "folder"}},

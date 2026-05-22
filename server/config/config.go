@@ -46,4 +46,8 @@ type Server struct {
 	VolcArkVideo VolcArkVideo `mapstructure:"volc-ark-video" json:"volc-ark-video" yaml:"volc-ark-video"`
 	// 阿里云 DashScope 短视频成片（video-synthesis 异步 API）
 	DashScopeVideo DashScopeVideo `mapstructure:"dashscope-video" json:"dashscope-video" yaml:"dashscope-video"`
+	// 短视频成片异步 Worker（goroutine + channel + Redis）
+	VideoAsync VideoAsync `mapstructure:"video-async" json:"video-async" yaml:"video-async"`
+	// 门户办公工具（临时邮箱代理、文件转换）
+	OfficeTools OfficeTools `mapstructure:"office-tools" json:"office-tools" yaml:"office-tools"`
 }

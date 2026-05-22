@@ -166,7 +166,10 @@ func (i *initApi) InitializeData(ctx context.Context) (context.Context, error) {
 		{ApiGroup: "短视频获客", Method: "POST", Path: "/contentShortVideo/createShortVideoWithAI", Description: "AI创建短视频入库"},
 		{ApiGroup: "短视频获客", Method: "POST", Path: "/contentShortVideo/generateShortVideo", Description: "生成短视频成片"},
 		{ApiGroup: "短视频获客", Method: "POST", Path: "/contentShortVideo/regenerateShortVideo", Description: "重新生成短视频"},
+		{ApiGroup: "短视频获客", Method: "GET", Path: "/contentVideoGenJob/getVideoGenJobList", Description: "异步成片任务列表"},
 		{ApiGroup: "内容获客", Method: "GET", Path: "/contentPortalContactLead/getPortalContactLeadList", Description: "访客留资列表"},
+		{ApiGroup: "内容获客", Method: "GET", Path: "/contentPortalVisitor/getPortalVisitorList", Description: "访客统计列表"},
+		{ApiGroup: "内容获客", Method: "GET", Path: "/contentPortalVisitor/getPortalVisitorSummary", Description: "访客统计汇总"},
 		{ApiGroup: "系统初始化", Method: "POST", Path: "/contentInit/sync", Description: "同步内容获客初始化数据"},
 
 		{ApiGroup: "代码生成器", Method: "GET", Path: "/autoCode/getDB", Description: "获取所有数据库"},

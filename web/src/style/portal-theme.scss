@@ -1,0 +1,54 @@
+/* 门户主题 — 左右共保留 200px 边距，内容区尽量铺满 */
+.portal-root {
+  --portal-side-reserve: 200px; /* 左右合计留白 */
+  --portal-side-gap: 100px; /* 单侧 = reserve / 2 */
+  --portal-font-base: 14px;
+  --portal-font-nav: 15px;
+  --portal-font-title: 18px;
+  --portal-brand: #1a73e8;
+  --portal-brand-dark: #1557b0;
+  --portal-accent: #ff6600;
+  --portal-header-bg: #ffffff;
+  --portal-header-border: #e0e0e0;
+  font-size: var(--portal-font-base);
+  line-height: 1.6;
+}
+
+.portal-root .portal-inner {
+  width: calc(100% - var(--portal-side-reserve));
+  max-width: none;
+  margin: 0 auto;
+  padding-left: 0;
+  padding-right: 0;
+  box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+  .portal-root {
+    --portal-side-reserve: 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .portal-root {
+    --portal-side-reserve: 16px;
+  }
+}
+
+/* 工具页内 Element Plus 字号统一 */
+.portal-root .office-tools-page {
+  font-size: var(--portal-font-base);
+
+  .el-button--small {
+    font-size: 13px;
+  }
+
+  .el-input__inner,
+  .el-textarea__inner {
+    font-size: 14px;
+  }
+
+  .el-tabs__item {
+    font-size: 14px;
+  }
+}

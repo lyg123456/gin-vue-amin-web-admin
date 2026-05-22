@@ -19,6 +19,11 @@ func (r *ShortVideoRouter) InitContentShortVideoRouter(private *gin.RouterGroup,
 		svPrivate.POST("regenerateShortVideo", shortVideoApi.RegenerateShortVideo)
 	}
 
+	jobPrivate := private.Group("contentVideoGenJob")
+	{
+		jobPrivate.GET("getVideoGenJobList", videoGenJobApi.GetVideoGenJobList)
+	}
+
 	svPublic := public.Group("public")
 	{
 		svPublic.GET("shortVideos", shortVideoApi.GetPublishedShortVideoList)

@@ -18,6 +18,8 @@ func ensureBizTablesUTF8MB4(db *gorm.DB) {
 		"content_articles",
 		"content_article_categories",
 		"portal_contact_leads",
+		"portal_visitor_daily",
+		"content_video_gen_jobs",
 	}
 	for _, table := range tables {
 		sql := fmt.Sprintf(

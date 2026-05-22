@@ -59,18 +59,19 @@
 <style lang="scss" scoped>
   .portal-pricing {
     background: var(--portal-panel-bg, #ffffff);
-    border-radius: var(--portal-radius, 12px);
-    padding: 24px 20px 28px;
+    border-radius: var(--portal-radius, 4px);
+    border: 1px solid #e0e0e0;
+    padding: 16px;
     box-sizing: border-box;
   }
 
   .portal-pricing__title {
     margin: 0 0 28px;
     text-align: center;
-    font-size: 1.05rem;
+    font-size: 18px;
     font-weight: 700;
     letter-spacing: 0.02em;
-    color: #1a1a1a;
+    color: #333;
   }
 
   .pricing-grid {

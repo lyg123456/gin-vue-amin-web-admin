@@ -172,28 +172,9 @@ func (s *ShortVideoService) SetGenerationResult(id uint, status, videoURL, taskI
 }
 
 func (s *ShortVideoService) RunVideoGeneration(id uint) error {
-	v, err := s.Find(id)
-	if err != nil {
+	if global.GVA_CONFIG.VideoAsync.Enabled {
+		_, err := EnqueueVideoGeneration(id)
 		return err
 	}
-	if strings.TrimSpace(v.Script) == "" {
-		return errors.New("请先生成或填写脚本")
-	}
-	_ = s.SetGenerating(id)
-	var taskID, videoURL string
-	SyncShortVideoFrames(&v)
-	if dashScopeVideoService.Enabled() {
-		taskID, videoURL, err = dashScopeVideoService.SubmitGeneration(v.Script, v.FirstFrameURL, v.LastFrameURL, v.DurationSec)
-	} else {
-		taskID, videoURL, err = volcArkVideoGenerateService.SubmitGeneration(v.Script, v.SourceImages, v.DurationSec)
-	}
-	if err != nil {
-		_ = s.SetGenerationResult(id, "failed", "", "", err.Error())
-		return err
-	}
-	st := "ready"
-	if videoURL == "" && taskID != "" {
-		st = "generating"
-	}
-	return s.SetGenerationResult(id, st, videoURL, taskID, "")
+	return ExecuteVideoGeneration(id)
 }

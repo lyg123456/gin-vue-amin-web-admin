@@ -5,12 +5,23 @@ type ServiceGroup struct {
 	ArticleCategoryService
 	PortalCarouselService
 	PortalContactLeadService
+	PortalVisitorService
 	BaiduWenxinArticleService
 	VolcArkArticleService
 	ShortVideoService
 	VolcArkShortVideoService
 	VolcArkVideoGenerateService
 	DashScopeVideoService
+	VideoGenJobService
+	OfficeTempEmailService
+	OfficeFileConvertService
+	OfficeMediaService
+	OfficeCompressService
+	OfficeTweetService
+	OfficeWebStyleService
+	OfficeWebCrawlService
+	OfficeSpeedService
+	OfficeWatermarkService
 }
 
 var (

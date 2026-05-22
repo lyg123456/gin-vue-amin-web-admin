@@ -2,6 +2,7 @@
   <div class="gva-table-box">
     <div class="gva-btn-list flex gap-2 flex-wrap items-center">
       <el-button type="primary" icon="plus" @click="$router.push({ name: 'shortVideoAi' })">AI 生成短视频</el-button>
+      <el-button @click="$router.push({ name: 'shortVideoGenJobs' })">异步任务队列</el-button>
       <el-input v-model="keyword" style="width: 220px" clearable placeholder="标题搜索" @keyup.enter="load" @clear="load" />
       <el-select v-model="status" style="width: 140px" clearable placeholder="状态" @change="load">
         <el-option label="草稿" value="draft" />
@@ -153,6 +154,7 @@
   const statusLabel = (s) =>
     ({
       draft: '草稿',
+      queued: '排队中',
       generating: '生成中',
       ready: '就绪',
       failed: '失败',
@@ -161,7 +163,7 @@
     })[s] || s
 
   const statusType = (s) =>
-    ({ published: 'success', ready: 'success', generating: 'warning', failed: 'danger' })[s] || 'info'
+    ({ published: 'success', ready: 'success', generating: 'warning', queued: 'info', failed: 'danger' })[s] || 'info'
 
   const load = async () => {
     const res = await getShortVideoList({

@@ -19,6 +19,9 @@ func RunServer() {
 		}
 	}
 
+	initialize.VideoAsyncWorker()
+	initialize.InitOfficeTools()
+
 	if global.GVA_CONFIG.System.UseMongo {
 		if err := initialize.Mongo.Initialization(); err != nil {
 			zap.L().Error(fmt.Sprintf("%+v", err))

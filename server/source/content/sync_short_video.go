@@ -39,6 +39,7 @@ func SyncShortVideoInit(db *gorm.DB) error {
 	}{
 		{"shortVideoAi", "aiGenerate", "view/shortVideo/aiGenerate/index.vue", "AI生成短视频", "magic-stick", 1},
 		{"shortVideoList", "list", "view/shortVideo/list/index.vue", "短视频列表", "list", 2},
+		{"shortVideoGenJobs", "jobs", "view/shortVideo/jobs/index.vue", "异步成片任务", "timer", 3},
 	}
 	for _, m := range menus {
 		var cnt int64
@@ -74,6 +75,7 @@ func SyncShortVideoInit(db *gorm.DB) error {
 		{ApiGroup: "短视频获客", Method: "POST", Path: "/contentShortVideo/createShortVideoWithAI", Description: "AI创建短视频入库"},
 		{ApiGroup: "短视频获客", Method: "POST", Path: "/contentShortVideo/generateShortVideo", Description: "生成短视频成片"},
 		{ApiGroup: "短视频获客", Method: "POST", Path: "/contentShortVideo/regenerateShortVideo", Description: "重新生成短视频"},
+		{ApiGroup: "短视频获客", Method: "GET", Path: "/contentVideoGenJob/getVideoGenJobList", Description: "异步成片任务列表"},
 		{ApiGroup: "短视频获客", Method: "GET", Path: "/public/shortVideos", Description: "公开短视频列表"},
 		{ApiGroup: "短视频获客", Method: "GET", Path: "/public/shortVideo/:slug", Description: "公开短视频详情"},
 	}
@@ -104,6 +106,7 @@ func SyncShortVideoInit(db *gorm.DB) error {
 		{"POST", "/contentShortVideo/createShortVideoWithAI"},
 		{"POST", "/contentShortVideo/generateShortVideo"},
 		{"POST", "/contentShortVideo/regenerateShortVideo"},
+		{"GET", "/contentVideoGenJob/getVideoGenJobList"},
 	}
 	for _, role := range []string{"888", "8881", "9528"} {
 		for _, pth := range paths {
@@ -123,9 +126,10 @@ func SyncShortVideoInit(db *gorm.DB) error {
 		}
 	}
 
-	var aiMenu, listMenu sysModel.SysBaseMenu
+	var aiMenu, listMenu, jobsMenu sysModel.SysBaseMenu
 	_ = db.Where("name = ?", "shortVideoAi").First(&aiMenu).Error
 	_ = db.Where("name = ?", "shortVideoList").First(&listMenu).Error
+	_ = db.Where("name = ?", "shortVideoGenJobs").First(&jobsMenu).Error
 	for _, aid := range []uint{888, 8881, 9528} {
 		var auth sysModel.SysAuthority
 		if err := db.Where("authority_id = ?", aid).First(&auth).Error; err != nil {
@@ -137,6 +141,9 @@ func SyncShortVideoInit(db *gorm.DB) error {
 		}
 		if listMenu.ID > 0 {
 			toAppend = append(toAppend, listMenu)
+		}
+		if jobsMenu.ID > 0 {
+			toAppend = append(toAppend, jobsMenu)
 		}
 		if len(toAppend) > 0 {
 			_ = db.Model(&auth).Association("SysBaseMenus").Append(toAppend)

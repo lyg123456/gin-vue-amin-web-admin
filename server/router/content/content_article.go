@@ -1,6 +1,9 @@
 package content
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/flipped-aurora/gin-vue-admin/server/middleware"
+	"github.com/gin-gonic/gin"
+)
 
 type ArticleRouter struct{}
 
@@ -37,6 +40,34 @@ func (r *ArticleRouter) InitContentArticleRouter(private *gin.RouterGroup, publi
 		articlePublic.GET("web/stats/info", articleApi.GetWebViewCount) // 仅查询
 		articlePublic.GET("homeCarousel", articleApi.GetHomeCarousel)   // 门户首页轮播
 		articlePublic.POST("portalContactLead", portalContactLeadApi.Submit) // 门户留资提交
+
+		office := articlePublic.Group("office")
+		office.Use(middleware.OfficeToolsDataPolicy())
+		{
+			office.GET("tempEmail/create", officeToolsApi.CreateTempMailbox)
+			office.GET("tempEmail/messages", officeToolsApi.GetTempEmailMessages)
+			office.GET("tempEmail/message", officeToolsApi.ReadTempEmailMessage)
+			office.GET("convert/capabilities", officeToolsApi.GetConvertCapabilities)
+			office.GET("convert/libreofficeStatus", officeToolsApi.GetLibreOfficeStatus)
+			office.POST("convert/file", officeToolsApi.ConvertOfficeFile)
+			office.GET("media/capabilities", officeToolsApi.GetMediaCapabilities)
+			office.POST("media/video", officeToolsApi.ProcessMedia)
+			office.POST("media/composite", officeToolsApi.CompositeImages)
+			office.POST("media/extractBackground", officeToolsApi.ExtractImageBackground)
+			office.POST("compress/image", officeToolsApi.CompressImage)
+			office.POST("compress/excel", officeToolsApi.CompressExcel)
+			office.GET("tweet/styles", officeToolsApi.GetTweetStyles)
+			office.POST("tweet/rewrite", officeToolsApi.RewriteTweet)
+			office.POST("web/downloadPages", officeToolsApi.GenerateWebStyleZip)
+			office.POST("web/styleTemplates", officeToolsApi.GenerateWebStyleZip) // 兼容旧路径
+			office.POST("web/crawlProducts", officeToolsApi.CrawlWebProductsExcel)
+			office.GET("speed/ping", officeToolsApi.SpeedPing)
+			office.GET("speed/info", officeToolsApi.SpeedInfo)
+			office.GET("speed/download", officeToolsApi.SpeedDownload)
+			office.POST("speed/upload", officeToolsApi.SpeedUpload)
+			office.GET("watermark/capabilities", officeToolsApi.GetWatermarkCapabilities)
+			office.POST("watermark/remove", officeToolsApi.RemoveWatermark)
+		}
 	}
 
 	leadPrivate := private.Group("contentPortalContactLead")

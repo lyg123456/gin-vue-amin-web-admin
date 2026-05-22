@@ -11,7 +11,9 @@ func bizModel() error {
 		&content.ContentArticle{},
 		&content.ContentArticleCategory{},
 		&content.PortalContactLead{},
+		&content.PortalVisitorDaily{},
 		&content.ContentShortVideo{},
+		&content.VideoGenJob{},
 	)
 	if err != nil {
 		return err

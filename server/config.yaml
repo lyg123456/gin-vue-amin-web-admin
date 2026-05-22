@@ -1,4 +1,4 @@
-aliyun-oss:
+﻿aliyun-oss:
     endpoint: yourEndpoint
     access-key-id: yourAccessKeyId
     access-key-secret: yourAccessKeySecret
@@ -290,3 +290,33 @@ dashscope-video:
     poll-interval-sec: 5
     # 若素材已部署为公网 HTTPS，可填如 https://your-domain.com（相对路径 uploads/file/... 会拼在此后）
     public-file-base-url: ""
+# 短视频成片异步 Worker（goroutine + channel + Redis 队列）
+video-async:
+    enabled: true
+    require-redis: true
+    worker-count: 2
+    queue-key: "gva:video:gen:queue"
+    channel-buffer: 100
+    redis-pop-timeout-sec: 5
+    max-attempts: 2
+# 门户办公工具：临时邮箱（后端代理 1secmail）、文件转换
+office-tools:
+    # mailtm=推荐（服务端可用）；1secmail 易被 403
+    temp-email-provider: mailtm
+    mailtm-api: "https://api.mail.tm"
+    temp-email-api: "https://www.1secmail.com/api/v1/"
+    max-upload-mb: 20
+    enable-libreoffice: true
+    # Windows: C:\Program Files\LibreOffice\program\soffice.exe
+    # Linux:   /usr/bin/soffice  （apt/yum 安装后 which soffice）
+    libreoffice-path: ""
+    temp-dir: ""
+    retention-hours: 24
+    mirror-max-pages: 50
+    mirror-max-depth: 3
+    mirror-max-mb: 30
+    # FFmpeg
+    # Windows: scripts/install-ffmpeg.ps1 或 D:\...\ffmpeg\bin\ffmpeg.exe
+    # Linux:   /usr/bin/ffmpeg  （apt install ffmpeg 后 which ffmpeg）
+    # ffmpeg-path: "/usr/bin/ffmpeg"
+    ffmpeg-path: ""
