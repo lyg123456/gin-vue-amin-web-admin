@@ -67,6 +67,16 @@ func (r *ArticleRouter) InitContentArticleRouter(private *gin.RouterGroup, publi
 			office.POST("speed/upload", officeToolsApi.SpeedUpload)
 			office.GET("watermark/capabilities", officeToolsApi.GetWatermarkCapabilities)
 			office.POST("watermark/remove", officeToolsApi.RemoveWatermark)
+			office.GET("douyin/categories", officeToolsApi.GetDouyinOfficialCategories)
+			office.POST("douyin/verifyCookie", officeToolsApi.VerifyDouyinCookie)
+			office.POST("douyin/crawl", officeToolsApi.CrawlDouyinIndustryVideos)
+			office.GET("wechat/categories", officeToolsApi.GetWechatOfficialCategories)
+			office.POST("wechat/verifyCookie", officeToolsApi.VerifyWechatCookie)
+			office.POST("wechat/crawl", officeToolsApi.CrawlWechatIndustryVideos)
+			office.GET("xhs/categories", officeToolsApi.GetXhsOfficialCategories)
+			office.POST("xhs/verifyCookie", officeToolsApi.VerifyXhsCookie)
+			office.POST("xhs/crawl", officeToolsApi.CrawlXhsIndustryVideos)
+			office.POST("media/download", officeToolsApi.ProxyMediaDownload)
 		}
 	}
 

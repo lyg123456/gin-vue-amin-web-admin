@@ -32,5 +32,8 @@ var (
 	officeWebCrawlService        = service.ServiceGroupApp.ContentServiceGroup.OfficeWebCrawlService
 	officeSpeedService           = service.ServiceGroupApp.ContentServiceGroup.OfficeSpeedService
 	officeWatermarkService       = service.ServiceGroupApp.ContentServiceGroup.OfficeWatermarkService
+	officeDouyinCrawlService     = service.ServiceGroupApp.ContentServiceGroup.OfficeDouyinCrawlService
+	officeWechatCrawlService     = service.ServiceGroupApp.ContentServiceGroup.OfficeWechatCrawlService
+	officeXhsCrawlService      = service.ServiceGroupApp.ContentServiceGroup.OfficeXhsCrawlService
 )
 

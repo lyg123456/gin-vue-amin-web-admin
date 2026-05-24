@@ -22,6 +22,9 @@ type ServiceGroup struct {
 	OfficeWebCrawlService
 	OfficeSpeedService
 	OfficeWatermarkService
+	OfficeDouyinCrawlService
+	OfficeWechatCrawlService
+	OfficeXhsCrawlService
 }
 
 var (

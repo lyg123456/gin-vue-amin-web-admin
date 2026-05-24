@@ -320,3 +320,6 @@ office-tools:
     # Linux:   /usr/bin/ffmpeg  （apt install ffmpeg 后 which ffmpeg）
     # ffmpeg-path: "/usr/bin/ffmpeg"
     ffmpeg-path: ""
+    # 小红书 xhshow 签名（宝塔 venv 示例，按服务器实际路径修改）
+    xhs-python-path: "/www/wwwroot/www.dnf1688.cloud/gin-vue-admin/.venv/bin/python3"
+    xhs-script-path: "/www/wwwroot/www.dnf1688.cloud/gin-vue-admin/server/scripts/xhs_sign_bridge.py"
