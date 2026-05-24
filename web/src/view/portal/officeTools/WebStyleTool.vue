@@ -1,5 +1,6 @@
 <template>
   <div class="tool-panel">
+    <CrawlerDisclaimerAlert />
     <el-alert
       title="输入网址后，自动爬取同域下的前端页面（HTML）及关联的 CSS/JS/图片等静态资源，打包为 ZIP 下载。不做仿站生成，仅原样保存可抓取的页面。"
       type="info"
@@ -33,6 +34,7 @@
   import { ref } from 'vue'
   import { ElMessage } from 'element-plus'
   import { downloadWebsitePagesZip } from '@/api/publicPortalOffice'
+  import CrawlerDisclaimerAlert from '@/view/portal/components/CrawlerDisclaimerAlert.vue'
 
   const url = ref('')
   const maxPages = ref(50)

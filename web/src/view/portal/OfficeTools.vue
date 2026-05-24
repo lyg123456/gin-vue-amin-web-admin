@@ -125,6 +125,9 @@
       <WebCrawlTool v-else-if="activeId === 'webcrawl'" />
       <NetworkSpeedTool v-else-if="activeId === 'speed'" />
       <WatermarkTool v-else-if="activeId === 'watermark'" />
+      <DouyinIndustryTool v-else-if="activeId === 'douyin'" />
+      <WechatVideoCrawlTool v-else-if="activeId === 'wechat'" />
+      <XhsVideoCrawlTool v-else-if="activeId === 'xhs'" />
 
     </section>
 
@@ -136,7 +139,8 @@
 
 <script setup>
 
-  import { computed, ref } from 'vue'
+  import { computed, onMounted, ref, watch } from 'vue'
+  import { useRoute } from 'vue-router'
 
   import TimeConverterTool from '@/view/portal/officeTools/TimeConverterTool.vue'
 
@@ -169,8 +173,14 @@
   import WebCrawlTool from '@/view/portal/officeTools/WebCrawlTool.vue'
   import NetworkSpeedTool from '@/view/portal/officeTools/NetworkSpeedTool.vue'
   import WatermarkTool from '@/view/portal/officeTools/WatermarkTool.vue'
+  import DouyinIndustryTool from '@/view/portal/officeTools/DouyinIndustryTool.vue'
+  import WechatVideoCrawlTool from '@/view/portal/officeTools/WechatVideoCrawlTool.vue'
+  import XhsVideoCrawlTool from '@/view/portal/officeTools/XhsVideoCrawlTool.vue'
+  import { VIDEO_CRAWL_TOOL_IDS } from '@/constants/videoCrawlNav'
 
   defineOptions({ name: 'WebOfficeTools' })
+
+  const route = useRoute()
 
 
 
@@ -180,12 +190,14 @@
     { id: 'watermark', title: '去除水印' },
     { id: 'webstyle', title: '网站页面下载' },
     { id: 'webcrawl', title: '商品爬取 Excel' },
-    { id: 'tweet', title: '推文排版' }
+    { id: 'tweet', title: '推文排版' },
+    { id: 'douyin', title: '抖音垂类抓取' },
+    { id: 'xhs', title: '小红书爆款抓取' }
   ]
 
 
 
-  const quickToolIds = new Set(quickTools.map((t) => t.id))
+  const quickToolIds = new Set([...quickTools.map((t) => t.id), ...VIDEO_CRAWL_TOOL_IDS])
 
 
 
@@ -296,6 +308,9 @@
     webstyle: '网站页面下载',
 
     webcrawl: '商品爬取 Excel',
+    douyin: '抖音垂类抓取',
+    wechat: '微信视频抓取',
+    xhs: '小红书视频抓取',
     speed: '网络测速',
     watermark: '去除水印'
 
@@ -338,6 +353,16 @@
     activeId.value = id
 
   }
+
+  const applyToolFromRoute = () => {
+    const tool = String(route.query.tool || '')
+    if (VIDEO_CRAWL_TOOL_IDS.has(tool)) {
+      activeId.value = tool
+    }
+  }
+
+  onMounted(applyToolFromRoute)
+  watch(() => route.query.tool, applyToolFromRoute)
 
 </script>
 

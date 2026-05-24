@@ -1,5 +1,6 @@
 <template>
   <div class="tool-panel">
+    <CrawlerDisclaimerAlert />
     <el-alert
       title="输入商品列表页或详情页网址，解析 JSON-LD / 常见 HTML 结构，导出 Excel（名称、价格、图片链接、商家、来源网址）。纯 JS 渲染站点可能无法识别。"
       type="info"
@@ -21,6 +22,7 @@
   import { ref } from 'vue'
   import { ElMessage } from 'element-plus'
   import { crawlWebProductsExcel } from '@/api/publicPortalOffice'
+  import CrawlerDisclaimerAlert from '@/view/portal/components/CrawlerDisclaimerAlert.vue'
 
   const url = ref('')
   const loading = ref(false)

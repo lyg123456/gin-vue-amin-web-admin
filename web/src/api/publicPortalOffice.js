@@ -112,6 +112,101 @@ export const downloadWebsitePagesZip = (data) =>
 export const generateWebStyleZip = downloadWebsitePagesZip
 
 /** 商品爬取导出 Excel */
+/** 抖音官方垂类列表 */
+export const getDouyinOfficialCategories = () =>
+  service({
+    url: '/public/office/douyin/categories',
+    method: 'get',
+    donNotShowLoading: true
+  })
+
+/** 检测 Cookie 是否可用 */
+export const verifyDouyinCookie = (data) =>
+  service({
+    url: '/public/office/douyin/verifyCookie',
+    method: 'post',
+    data,
+    donNotShowLoading: true,
+    timeout: 60000
+  })
+
+/** Cookie 按垂类抓取视频（每类限条数、热度下限、metric: auto|play|digg） */
+export const crawlDouyinIndustryVideos = (data) =>
+  service({
+    url: '/public/office/douyin/crawl',
+    method: 'post',
+    data,
+    donNotShowLoading: false,
+    timeout: 180000
+  })
+
+/** 微信视频号官方垂类列表 */
+export const getWechatOfficialCategories = () =>
+  service({
+    url: '/public/office/wechat/categories',
+    method: 'get',
+    donNotShowLoading: true
+  })
+
+/** 检测视频号助手 Cookie */
+export const verifyWechatCookie = (data) =>
+  service({
+    url: '/public/office/wechat/verifyCookie',
+    method: 'post',
+    data,
+    donNotShowLoading: true,
+    timeout: 60000
+  })
+
+/** Cookie 按垂类抓取微信视频（每类限条数、热度下限、metric: auto|play|digg） */
+export const crawlWechatIndustryVideos = (data) =>
+  service({
+    url: '/public/office/wechat/crawl',
+    method: 'post',
+    data,
+    donNotShowLoading: false,
+    timeout: 180000
+  })
+
+/** 小红书官方垂类列表 */
+export const getXhsOfficialCategories = () =>
+  service({
+    url: '/public/office/xhs/categories',
+    method: 'get',
+    donNotShowLoading: true
+  })
+
+/** 检测小红书 Cookie */
+export const verifyXhsCookie = (data) =>
+  service({
+    url: '/public/office/xhs/verifyCookie',
+    method: 'post',
+    data,
+    donNotShowLoading: true,
+    timeout: 90000
+  })
+
+/** Cookie 按垂类抓取小红书视频笔记 */
+export const crawlXhsIndustryVideos = (data) =>
+  service({
+    url: '/public/office/xhs/crawl',
+    method: 'post',
+    data,
+    donNotShowLoading: false,
+    timeout: 180000
+  })
+
+/** 服务端代下视频（带 Referer/Cookie，解决直链 403） */
+export const proxyOfficeMediaDownload = (data) =>
+  service({
+    url: '/public/office/media/download',
+    method: 'post',
+    data,
+    responseType: 'blob',
+    donNotShowLoading: false,
+    timeout: 300000
+  })
+
 export const crawlWebProductsExcel = (data) =>
   service({
     url: '/public/office/web/crawlProducts',
