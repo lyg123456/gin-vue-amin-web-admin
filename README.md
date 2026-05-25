@@ -319,12 +319,7 @@ swag init
 
 ## 6. 知识库 
 
-## 6.1 团队博客
-
-> https://www.yuque.com/flipped-aurora
->
->内有前端框架教学视频。如果觉得项目对您有所帮助可以添加我的个人微信:shouzi_1994，欢迎您提出宝贵的需求。
-
+ 
 ## 6.2 教学视频
 
 （1）手把手教学视频
@@ -356,7 +351,7 @@ swag init
 ### 微信交流群
 | 微信 |
 |  :---:  | 
-| <img width="150" height="150" alt="7c38e74414735d1454fa9da8b5c36116" src="https://github.com/user-attachments/assets/b008a9ff-e763-4815-88fb-e82c2aeb4dbb" />
+| <img width="150" height="180" alt="7c38e74414735d1454fa9da8b5c36116" src="https://github.com/user-attachments/assets/b008a9ff-e763-4815-88fb-e82c2aeb4dbb" />
 
 防止广告进群，添加微信，输入以下代码执行结果（请勿转码为string）
 
@@ -379,7 +374,7 @@ fmt.Println(decodeBytes, err)
 
 ## 9. 捐赠
 
-如果你觉得这个项目对你有帮助，你可以请作者喝饮料 :tropical_drink: [点我](https://www.gin-vue-admin.com/coffee/index.html)
+ 
 
 ## 10. 注意事项
 
