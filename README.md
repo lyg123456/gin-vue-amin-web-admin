@@ -43,7 +43,7 @@
 
 
 # 项目文档
-[在线文档](https://www.gin-vue-admin.com) : https://www.gin-vue-admin.com
+[原项目在线文档](https://www.gin-vue-admin.com) : https://www.gin-vue-admin.com
 
 [初始化](https://www.gin-vue-admin.com/guide/start-quickly/initialization.html)
 						       
@@ -75,16 +75,13 @@
 
 ### 1.1 项目介绍
 
-> Gin-vue-admin是一个基于 [vue](https://vuejs.org) 和 [gin](https://gin-gonic.com) 开发的全栈前后端分离的开发基础平台，集成jwt鉴权，动态路由，动态菜单，casbin鉴权，表单生成器，代码生成器等功能，提供多种示例文件，让您把更多时间专注在业务开发上。
+>基于 [vue](https://vuejs.org) 和 [gin](https://gin-gonic.com) 开发的全栈前后端分离的开发基础平台，集成jwt鉴权，动态路由，动态菜单，casbin鉴权，表单生成器，代码生成器等功能，提供多种示例文件，让您把更多时间专注在业务开发上。
 
-[在线预览](http://demo.gin-vue-admin.com): http://demo.gin-vue-admin.com
+[在线体验爬虫] https://www.dnf1688.cloud
 
-测试用户名：admin
-
-测试密码：123456
 
 ### 1.2 贡献指南
-Hi! 首先感谢你使用 gin-vue-admin。
+Hi! 首先感谢 gin-vue-admin。
 
 Gin-vue-admin 是一套为快速研发准备的一整套前后端分离架构式的开源框架，旨在快速搭建中小型项目。
 
@@ -119,7 +116,7 @@ Gin-vue-admin 的成长离不开大家的支持，如果你愿意为 gin-vue-adm
 ```bash
 
 # 克隆项目
-git clone https://github.com/flipped-aurora/gin-vue-admin.git
+git clone  https://github.com/lyg123456/gin-vue-amin-web-admin.git
 # 进入server文件夹
 cd server
 
@@ -354,12 +351,13 @@ swag init
 
 ### 7.1 技术群
 
-### QQ交流群：971857775
+### QQ交流群：暂未设
 
 ### 微信交流群
 | 微信 |
 |  :---:  | 
-| <img width="150" src="http://qmplusimg.henrongyi.top/qrjjz.png"> 
+
+| <img width="150" height="965" alt="7c38e74414735d1454fa9da8b5c36116" src="https://github.com/user-attachments/assets/b008a9ff-e763-4815-88fb-e82c2aeb4dbb" />
 
 防止广告进群，添加微信，输入以下代码执行结果（请勿转码为string）
 
@@ -368,6 +366,7 @@ str := "5Yqg5YWlR1ZB5Lqk5rWB576k"
 decodeBytes, err := base64.StdEncoding.DecodeString(str)
 fmt.Println(decodeBytes, err)
 ```
+### 注明：本项目是二开，仅用于学习使用。
 
 ### [关于我们](https://www.gin-vue-admin.com/about/join.html)
 
