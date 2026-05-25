@@ -77,8 +77,8 @@
 
 >基于 [vue](https://vuejs.org) 和 [gin](https://gin-gonic.com) 开发的全栈前后端分离的开发基础平台，集成jwt鉴权，动态路由，动态菜单，casbin鉴权，表单生成器，代码生成器等功能，提供多种示例文件，让您把更多时间专注在业务开发上。
 
-[在线体验爬虫] https://www.dnf1688.cloud
-
+[在线体验爬虫 ] [https://www.dnf1688.cloud] (https://www.dnf1688.cloud/#/office-tools?tool=douyin)
+[爬虫使用教程 ] [https://editor.csdn.net/md/?articleId=161379851]
 
 ### 1.2 贡献指南
 Hi! 首先感谢 gin-vue-admin。
@@ -356,8 +356,7 @@ swag init
 ### 微信交流群
 | 微信 |
 |  :---:  | 
-
-| <img width="150" height="965" alt="7c38e74414735d1454fa9da8b5c36116" src="https://github.com/user-attachments/assets/b008a9ff-e763-4815-88fb-e82c2aeb4dbb" />
+| <img width="150" height="150" alt="7c38e74414735d1454fa9da8b5c36116" src="https://github.com/user-attachments/assets/b008a9ff-e763-4815-88fb-e82c2aeb4dbb" />
 
 防止广告进群，添加微信，输入以下代码执行结果（请勿转码为string）
 
